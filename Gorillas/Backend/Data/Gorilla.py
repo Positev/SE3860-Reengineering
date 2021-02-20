@@ -12,3 +12,4 @@ class Gorilla:
     self.x_pos = x_pos
     self.y_pos = y_pos
     self.player_id = player_id
+    self.arm_state = 0
