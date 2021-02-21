@@ -9,12 +9,6 @@ class Score:
         else:
             raise Exception("Input a bwrong player_id.")
 
-    def display(self):
-        print(str(self.__score_dict[0]) + '=>' + str(self.__score_dict[0]))
+    def get_score(player_id):
+        return self.__score_dict[player_id]
 
-
-s = Score()
-s.record_win(0)
-s.record_win(0)
-
-s.display()
