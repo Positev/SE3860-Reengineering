@@ -10,7 +10,6 @@ class ArmState(Enum):
 @unique
 class ProjectileSprite(Enum):
     BANANA = 0
-    BANANA = 1
 
 @unique
 class WindDirection(Enum):
