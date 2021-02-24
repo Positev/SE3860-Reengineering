@@ -12,6 +12,7 @@ class TEMPGORILLAENUM:
   right_up = 2
   both_up = 3
 
+#TODO Write tests for this
 class GorillaController:
   def __init__(self, gorilla):
     self.gorilla = gorilla

@@ -11,6 +11,9 @@ class Projectile:
         self._launch_angle = launch_angle
         self._start_x = start_x
         self._start_y = start_y
+        self._flight_time = 0
+        self._current_x = 0
+        self._current_y = 0
         self._sender_id = sender_id
         self._sprite = sprite
 
@@ -40,11 +43,33 @@ class Projectile:
 
     @property
     def start_y(self) -> float:
-        return self._start_x
+        return self._start_y
 
     @start_y.setter
     def start_y(self, value: float):
         self._start_y = value
+
+
+
+    @property
+    def current_x(self) -> float:
+        return self._current_x
+
+    @current_x.setter
+    def current_x(self, value: float):
+        self._current_x = value
+
+    @property
+    def current_y(self) -> float:
+        return self._current_y
+
+    @current_y.setter
+    def current_y(self, value: float):
+        self._current_y = value
+
+
+
+
 
     @property
     def sender_id(self) -> str:
@@ -53,6 +78,15 @@ class Projectile:
     @sender_id.setter
     def sender_id(self, value: str):
         self._sender_id = value
+
+    @property
+    def flight_time(self) -> str:
+        return self._flight_time
+
+    
+    def increment_flight_time(self):
+        #TODO Probably can tune this value.
+        self._flight_time += 2
 
     @property
     def sprite(self) -> int:
