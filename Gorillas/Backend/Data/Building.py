@@ -1,12 +1,17 @@
 from typing import Tuple
 
+
+
 class Building:
     def __init__(self, x_pos: float, y_pos: float, color: Tuple[int,int,int], width:float, height:float ):
-        self._x_pos = 0.0
-        self._y_pos = 0.0
-        self._color = (0,0,0)
-        self._width = 0
-        self._height = 0
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.color = color
+        self.width = width
+        self.height = height
+
+    def __str__(self):
+        return f"X: {self._x_pos}, Y:{self._y_pos}, Color: {self._color}, Width: {self._width}, Height: {self._height}"
 
     @property
     def x_pos(self) -> float:
@@ -46,7 +51,7 @@ class Building:
 
     @color.setter
     def color(self, value: Tuple[int,int,int]):
-        if type(value) is not Tuple or len(value) != 3:
+        if type(value) is not tuple:
             raise ValueError(f"{value} is not a valid color.")
 
         for val in value:
