@@ -1,6 +1,6 @@
 import unittest
-from wind import Wind
-from enumerators import WindDirection
+from Data.Wind import Wind
+from Data.Enumerators import WindDirection
 
 
 class TestWind(unittest.TestCase):

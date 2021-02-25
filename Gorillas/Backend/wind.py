@@ -1,4 +1,4 @@
-from enumerators import WindDirection
+from Data.Enumerators import WindDirection
 
 
 class Wind:

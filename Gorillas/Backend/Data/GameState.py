@@ -1,6 +1,6 @@
-from world_destruction import WorldDestruction
-from wind import Wind
-from scorekeeper import ScoreKeeper
+from WorldDestruction import WorldDestruction
+from Wind import Wind
+from ScoreKeeper import ScoreKeeper
 
 
 class GameState:
