@@ -15,3 +15,9 @@ class ProjectileSprite(Enum):
 class WindDirection(Enum):
     LEFT = 0
     RIGHT = 1
+
+@unique
+class CollisionResult(Enum):
+    NO_HIT = 0
+    PLAYER_HIT = 1
+    BUILDING_HIT= 2
