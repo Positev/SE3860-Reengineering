@@ -1,4 +1,4 @@
-from Data.Enumerators import WindDirection
+from Backend.Data.Enumerators import WindDirection
 
 
 class Wind:
@@ -11,6 +11,20 @@ class Wind:
             self.__velocity = velocity
         else:
             raise Exception("Velocity must be greater than or equal to zero.")
+
+    def __str__(self):
+        direction_map = {
+            WindDirection.LEFT : "Left",
+            WindDirection.RIGHT : "Right",
+
+        }
+
+        out = [
+            f"Velocity: {self.velocity}",
+            f"Direction: {direction_map[self.direction]}"
+        ]
+
+        return ','.join(out)
 
     @property
     def direction(self):

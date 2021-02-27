@@ -3,6 +3,10 @@ class ScoreKeeper:
     def __init__(self, player_1_init_sorce=0, player_2_init_sorce=0):
         self.__score_dict = {0: player_1_init_sorce, 1: player_2_init_sorce}
 
+    def __str__(self):
+        out = [f"Player {_id} -> {score}" for _id, score in self.__score_dict.items()]
+        return ',  '.join(out)
+
     @property
     def score_dict(self):
         return self.__score_dict

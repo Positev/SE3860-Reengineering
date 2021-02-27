@@ -1,8 +1,7 @@
 from typing import Tuple, List
 import math
 
-from Data.Projectile import Projectile
-
+from Backend.Data.Projectile import Projectile
 
 PATH_STEP_PER_FRAME = 1
 GRAVITY = .001
@@ -28,8 +27,8 @@ class ProjectileHandler:
         vx = projectile.initial_velocity * cosine
         vy = projectile.initial_velocity * sine
 
-        new_x = vx * projectile.flight_time + wind_velocity
-        new_y = vy * projectile.flight_time - (GRAVITY / 2) * (projectile.flight_time ** 2)
+        new_x = vx * projectile.flight_time + wind_velocity + projectile.start_x
+        new_y = vy * projectile.flight_time - (GRAVITY / 2) * (projectile.flight_time ** 2) + projectile.start_y
 
         projectile.current_x = new_x
         projectile.current_y = new_y

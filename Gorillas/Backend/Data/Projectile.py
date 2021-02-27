@@ -17,6 +17,20 @@ class Projectile:
         self._sender_id = sender_id
         self._sprite = sprite
 
+    def __str__(self):
+        out = [
+            f"Initial Velocity: {self.initial_velocity}",
+            f"Launch Angle: {self.launch_angle}",
+            f"Flight Time: {self.flight_time}",
+            f"Start Position: ({self.start_x},{self.start_y})",
+            f"Current Position: ({self.current_x},{self.current_y})",
+            f"Sender ID: {self.sender_id}",
+            f"Sprite:  {self.sprite}",
+
+        ]
+
+        return ','.join(out)
+
     @property
     def initial_velocity(self) -> float:
         return self._initial_velocity

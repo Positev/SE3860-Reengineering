@@ -13,6 +13,11 @@ class Building:
     def __str__(self):
         return f"X: {self._x_pos}, Y:{self._y_pos}, Color: {self._color}, Width: {self._width}, Height: {self._height}"
 
+    def top_center(self) -> Tuple[float,float]:
+        x = self.x_pos + self.width / 2
+        y = self.height
+        return (x,y)
+
     @property
     def x_pos(self) -> float:
         return self._x_pos

@@ -35,8 +35,7 @@ class BuildingGenerator:
             generated_buildings.append(new_building)
 
 
-        for building in generated_buildings:
-            print(building)
+        return generated_buildings
 
 
 if __name__ == '__main__':

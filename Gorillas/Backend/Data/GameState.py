@@ -1,6 +1,5 @@
-from WorldDestruction import WorldDestruction
-from Wind import Wind
-from ScoreKeeper import ScoreKeeper
+from Backend.Data.ScoreKeeper import ScoreKeeper
+from Backend.Data.Wind import Wind
 
 
 class GameState:
@@ -9,7 +8,7 @@ class GameState:
            isinstance(gorillas, list) and
            isinstance(active_projectiles, list) and
            isinstance(destruction, list) and
-           isinstance(score, ScoreKeeper) and
+           isinstance(score, ScoreKeeper) and #TODO Should not be score keeper
            isinstance(wind, Wind) and
            isinstance(turn_active, bool)):
             self.__building = building
@@ -19,6 +18,7 @@ class GameState:
             self.__score = score
             self.__wind = wind
             self.__turn_active = turn_active
+            self._player_turn = 0
         else:
              raise Exception("Wrong type parameter.")
 
@@ -32,6 +32,12 @@ class GameState:
             self.__building = building
         else:
             raise Exception("Wrong type parameter.")
+
+    def active_player(self):
+        return self.gorillas[self._player_turn]
+
+    def next_player(self):
+        self._player_turn = self._player_turn % len(self.gorillas)
 
     @property
     def gorillas(self):
@@ -97,4 +103,22 @@ class GameState:
         if (isinstance(turn_active, bool)):
             self.__turn_active = turn_active
         else:
-            raise Exception("Wrong type parameter.")   
+            raise Exception("Wrong type parameter.")
+
+    def __str__(self):
+
+        newline = '\n'
+        tabbednewline = '\n\t'
+        out = [
+            '-'*90,
+            f"Buildings: {tabbednewline}{tabbednewline.join([str(building) for building in self.building])}",
+            f"Gorillas: {tabbednewline}{tabbednewline.join([str(gorilla) for gorilla in self.gorillas])}",
+            f"Active Projectiles: {tabbednewline}{tabbednewline.join([str(projectile) for projectile in self.active_projectiles])}",
+            f"World Destruction: {tabbednewline}{tabbednewline.join([str(destruction) for destruction in self.destruction])}",
+            f"Score: {self.score}",
+            f"Wind: {self.wind}",
+            f"Turn Active: {self.turn_active}",
+            '-'*90,
+        ]
+
+        return '\n'.join(out)
