@@ -4,6 +4,7 @@
 # This class should provide the state information that allows the front end to render a gorilla that has
 # its left arm up, right arm up, or both arms down at some position.
 from Backend.Data.Enumerators import ArmState, GorillaLocation
+import pygame
 
 WIDTH = 50
 HEIGHT = 50
@@ -103,3 +104,7 @@ class Gorilla:
     def arm_state(self, value: int):
         # TODO enforce that value is an enum and change type hints to use enum
         self._arm_state = value
+
+    @property
+    def rect(self):
+        return pygame.Rect(self._x_pos, self._y_pos, self._width, self._height)

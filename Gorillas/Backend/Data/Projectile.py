@@ -1,4 +1,4 @@
-
+import pygame
 WIDTH = 30
 HEIGHT = 20
 
@@ -160,3 +160,7 @@ class Projectile:
     def sprite(self, value: int):
         #TODO Enforce that sprite is instance of enum
         self._sprite = value
+
+    @property
+    def rect(self):
+        return pygame.Rect(self._current_x, self._current_y, self._width, self._height)

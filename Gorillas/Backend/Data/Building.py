@@ -1,4 +1,5 @@
 from typing import Tuple
+import pygame
 
 
 
@@ -72,3 +73,7 @@ class Building:
             if not (0 <= val <= 255):
                 raise ValueError(f"{val} must be between 0 and 255. {value} is not a valid color.")
         self._color = value
+
+    @property
+    def rect(self):
+        return pygame.Rect(self._x_pos, self._y_pos, self._width, self._height)
