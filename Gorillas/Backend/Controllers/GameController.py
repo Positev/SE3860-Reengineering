@@ -1,5 +1,6 @@
 from typing import Tuple, List
 
+from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
 from Backend.Controllers.BuildingGenerator import BuildingGenerator
 from Backend.Controllers.GorillaController import GorillaController
 from Backend.Controllers.ProjectileHandler import ProjectileHandler
@@ -51,6 +52,7 @@ class GameController:
         gorilla_controller.throw()
 
     def next_frame(self):
+        #TODO return copy of game state
         updated_projectiles = ProjectileHandler(self._game_state.wind).move_projectiles(self._game_state.active_projectiles)
         self._game_state.active_projectiles = updated_projectiles
 
@@ -58,19 +60,24 @@ class GameController:
             controller = GorillaController(player)
             controller.handle_new_frame()
 
-        return self._game_state
+        return self._game_state.copy()
 
 
     
     @property
     def game_state(self) -> float:
-        return self._game_state
+        #TODO return copy of game state
+        return self._game_state.copy()
 
 
 if __name__ == '__main__':
-    controller = GameController("player_1", "player_2", (400,600))
+    screen_size = (400,600)
+    controller = GameController("player_1", "player_2", screen_size)
+    coordinate_adapter = CoordinateAdapter(screen_size)
     controller.throw_projectile(30, 5, )
     print(controller.game_state)
-    for i in range (50):
-        print(controller.next_frame())
+    for i in range (1):
+        frame = controller.next_frame()
+        print(frame)
+        print(coordinate_adapter.adapt(frame))
 

@@ -1,21 +1,32 @@
+
+WIDTH = 30
+HEIGHT = 20
+
 class Projectile:
     def __init__(self, 
                  initial_velocity: float, 
                  launch_angle: float, 
                  start_x:float, 
-                 start_y: float, 
+                 start_y: float,
                  sender_id: str, 
-                 sprite: int):
+                 sprite: int,
+                 width = WIDTH,
+                 height = HEIGHT):
 
         self._initial_velocity = initial_velocity
         self._launch_angle = launch_angle
         self._start_x = start_x
         self._start_y = start_y
+        self._width = width
+        self._height = height
+        self._rotation = 0
         self._flight_time = 0
         self._current_x = 0
         self._current_y = 0
         self._sender_id = sender_id
         self._sprite = sprite
+
+
 
     def __str__(self):
         out = [
@@ -23,6 +34,8 @@ class Projectile:
             f"Launch Angle: {self.launch_angle}",
             f"Flight Time: {self.flight_time}",
             f"Start Position: ({self.start_x},{self.start_y})",
+            f"Size: ({self._width}, {self._height})",
+            f"Rotation: {self._rotation}",
             f"Current Position: ({self.current_x},{self.current_y})",
             f"Sender ID: {self.sender_id}",
             f"Sprite:  {self.sprite}",
@@ -30,6 +43,17 @@ class Projectile:
         ]
 
         return ','.join(out)
+
+    def copy(self):
+        p = Projectile(self.initial_velocity, self.launch_angle, self.start_x, self.start_y, self.sender_id, self.sprite)
+        p.__dict__.update(self.__dict__)
+        return p
+
+    def get_pos(self):
+        return self.current_x, self.current_y
+
+    def get_size(self):
+        return self._width, self._height
 
     @property
     def initial_velocity(self) -> float:
@@ -46,6 +70,15 @@ class Projectile:
     @launch_angle.setter
     def launch_angle(self, value: float):
         self._launch_angle = value
+
+    @property
+    def rotation(self) -> float:
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value: float):
+        self._rotation = value
+
 
     @property
     def start_x(self) -> float:
@@ -80,6 +113,23 @@ class Projectile:
     @current_y.setter
     def current_y(self, value: float):
         self._current_y = value
+
+
+    @property
+    def width(self) -> float:
+        return self._width
+
+    @width.setter
+    def width(self, value: float):
+        self._width = value
+
+    @property
+    def height(self) -> float:
+        return self._height
+
+    @height.setter
+    def height(self, value: float):
+        self._height = value
 
 
 

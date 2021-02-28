@@ -12,6 +12,11 @@ class Wind:
         else:
             raise Exception("Velocity must be greater than or equal to zero.")
 
+    def copy(self):
+        w = Wind()
+        w.__dict__.update(self.__dict__)
+        return w
+
     def __str__(self):
         direction_map = {
             WindDirection.LEFT : "Left",

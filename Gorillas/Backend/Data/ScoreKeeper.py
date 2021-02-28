@@ -7,6 +7,11 @@ class ScoreKeeper:
         out = [f"Player {_id} -> {score}" for _id, score in self.__score_dict.items()]
         return ',  '.join(out)
 
+    def copy(self):
+        s = ScoreKeeper()
+        s.__dict__.update(self.__score_dict)
+        return s
+
     @property
     def score_dict(self):
         return self.__score_dict

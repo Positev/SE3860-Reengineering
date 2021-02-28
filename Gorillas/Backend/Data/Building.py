@@ -13,10 +13,17 @@ class Building:
     def __str__(self):
         return f"X: {self._x_pos}, Y:{self._y_pos}, Color: {self._color}, Width: {self._width}, Height: {self._height}"
 
+    def get_pos(self):
+        return self.x_pos, self.y_pos
+
+
     def top_center(self) -> Tuple[float,float]:
         x = self.x_pos + self.width / 2
         y = self.height
-        return (x,y)
+        return x, y
+
+    def copy(self):
+        return Building(self.x_pos,self.y_pos, tuple(c for c in self.color), self.width, self.height)
 
     @property
     def x_pos(self) -> float:

@@ -5,16 +5,33 @@
 # its left arm up, right arm up, or both arms down at some position.
 from Backend.Data.Enumerators import ArmState, GorillaLocation
 
+WIDTH = 50
+HEIGHT = 50
+
 
 class Gorilla:
 
-    def __init__(self, x_pos: float, y_pos: float, player_id: str, location: GorillaLocation):
+    def __init__(self, x_pos: float, y_pos: float, player_id: str, location: GorillaLocation, width=WIDTH,
+                 height=HEIGHT):
         self._x_pos = x_pos
         self._y_pos = y_pos
+        self._width = width
+        self._height = height
         self._player_id = player_id
         self._location = location
         self._arm_state = ArmState.ARM_DOWN
         self._arm_state_clock = 0
+
+    def copy(self):
+        g = Gorilla(self.x_pos, self.y_pos, self.player_id, self.location)
+        g.__dict__.update(self.__dict__)
+        return g
+
+    def get_pos(self):
+        return self._x_pos, self._y_pos
+
+    def get_size(self):
+        return self._width, self._height
 
     @property
     def location(self):
@@ -34,6 +51,7 @@ class Gorilla:
         }
         out = [
             f"Position: ({self.x_pos}, {self.y_pos})",
+            f"Size: ({self._width}, {self._height})"
             f"Player ID: {self.player_id}",
             f"Arms: {arm_state_map[self._arm_state]}",
             f"Location: {location_map[self._location]}",
