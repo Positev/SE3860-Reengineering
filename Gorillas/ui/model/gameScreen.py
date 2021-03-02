@@ -1,9 +1,8 @@
 import pygame
 from model import Model
-from color import Color
-from sun import Sun
+from Gorillas.color import Color
+from Gorillas.ui.model.elements.sprites.sun import Sun
 from Backend.Controllers.GameController import GameController
-from Backend.Data.GameState import GameState
 
 
 class GameScreenModel(Model):

@@ -1,10 +1,10 @@
 import pygame
 
-from DougGorillas.UI.model.elements.button import Button
-from DougGorillas.UI.model.elements.edit_box import EditBox
-from DougGorillas.UI.model.elements.text_box import TextBox
-from DougGorillas.UI.model.model import Model
-from DougGorillas.color import Color
+from Gorillas.ui.model.elements.button import Button
+from Gorillas.ui.model.elements.edit_box import EditBox
+from Gorillas.ui.model.elements.text_box import TextBox
+from Gorillas.ui.model.model import Model
+from Gorillas.color import Color
 
 
 class CreateGameMenu(Model):
@@ -132,6 +132,8 @@ class CreateGameMenu(Model):
             try:
                 pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
             except TypeError:
+                pass  # todo Create an error Label to show the user the problem
+            except ValueError:
                 pass  # todo Create an error Label to show the user the problem
 
     def handle_event(self, event):

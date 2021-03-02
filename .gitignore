@@ -318,7 +318,7 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-# OpenCover UI analysis results
+# OpenCover ui analysis results
 OpenCover/
 
 # Azure Stream Analytics local run output
@@ -338,4 +338,4 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/DougGorillas/Sprites/Doug/dougAnimated.gif
+/Gorillas/Sprites/Doug/dougAnimated.gif

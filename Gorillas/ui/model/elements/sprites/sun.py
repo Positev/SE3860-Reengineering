@@ -11,7 +11,7 @@ class Sun(pygame.sprite.Sprite):
         # Create Rect
         self.rect = pygame.Rect(x_pos, y_pos, width, height)
         # Create default image
-        self.defaultImage = pygame.image.load("/Sprites/Sun/sun_doug_2.png")
+        self.defaultImage = pygame.image.load("../../../../Sprites/Sun/sun_doug_2.png")
         # Create optional turn happening image for later development
-        self.thrownImage = pygame.image.load("/Sprites/Sun/sun_doug_1.png")
+        self.thrownImage = pygame.image.load("../../../../Sprites/Sun/sun_doug_1.png")
         scale(self.defaultImage, (width, height), dest_surface=None)

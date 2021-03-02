@@ -1,5 +1,5 @@
 import pygame
-from DougGorillas.color import Color
+from Gorillas.color import Color
 
 
 class TextBox(pygame.sprite.Sprite):

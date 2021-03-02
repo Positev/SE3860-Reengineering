@@ -1,6 +1,6 @@
 import pygame
-from DougGorillas.color import Color
-from DougGorillas.UI.model.elements.text_box import TextBox
+from Gorillas.color import Color
+from Gorillas.ui.model.elements.text_box import TextBox
 
 
 class EditBox(TextBox):
