@@ -3,17 +3,15 @@ from color import Color
 
 
 class Button(pygame.sprite.Sprite):
-    """A Button for selecting a menu option
-    Function: Hover
-    Function: Move"""
+    """A Button for selecting a menu option"""
 
-    def __init__(self, button_event, text, font_size, size, pos, default_color=Color.LIGHT_GRAY,
+    def __init__(self, button_event, text, font, size, pos, default_color=Color.LIGHT_GRAY,
                  hover_color=Color.DARK_GRAY):
         super(Button, self).__init__()
         self.button_event = button_event
 
-        # Create the font
-        self.font = pygame.font.Font(pygame.font.get_default_font(), font_size)
+        self.font = font
+        # Create the font render
         self.textRender = self.font.render(text, True, Color.BLACK)
         self.textRender.get_rect().center = (size[0] // 2, size[1] // 2)
 
@@ -33,6 +31,7 @@ class Button(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
     def handle_event(self, event):
+        """Check if the button is being hovered over or clicked"""
         if event.type == pygame.MOUSEMOTION:
             self.update(event.pos)
         elif event.type == pygame.MOUSEBUTTONUP:
@@ -40,6 +39,7 @@ class Button(pygame.sprite.Sprite):
                 pygame.event.post(self.button_event)
 
     def update(self, pos):
+        """Change the color of the button if its being hover over"""
         if self.image == self.defaultImage and self.rect.collidepoint(pos):
             self.image = self.hoverImage
         elif self.image == self.hoverImage and not self.rect.collidepoint(pos):

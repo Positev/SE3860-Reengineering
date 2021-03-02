@@ -1,5 +1,5 @@
 class Color(object):
-    """Color constants"""
+    """Helper class for Color constants"""
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     RED = (255, 0, 0)
