@@ -4,6 +4,7 @@ from Gorillas.ui.model.elements.button import Button
 from Gorillas.ui.model.elements.edit_box import EditBox
 from Gorillas.ui.model.elements.text_box import TextBox
 from Gorillas.ui.model.model import Model
+from Gorillas.ui.model.gameScreen import GameScreenModel
 from Gorillas.color import Color
 
 
@@ -25,6 +26,7 @@ class CreateGameMenu(Model):
     def __init__(self, screen_size):
         """Initializes the menu"""
         super(CreateGameMenu, self).__init__(self.BACKGROUND_COLOR)
+        self.screen_size = screen_size
         self.buttons = list()
         self.edit_boxes = list()
         self.render.append(pygame.sprite.Group())
@@ -94,7 +96,7 @@ class CreateGameMenu(Model):
         player_two_name = self.player_two_edit_box.text
         gravity = float(self.gravity_edit_box.text)
         score = int(self.score_edit_box.text)
-        return None  # todo send a game model with the attributes
+        return GameScreenModel(self.screen_size, player_one_name, player_two_name)
 
     def get_next_edit_box(self):
         """Sets the active edit box to the next one in the list"""
@@ -129,11 +131,11 @@ class CreateGameMenu(Model):
     def do_user_event(self, event):
         """If the user event is create game, a game model will try to be added to the event queue"""
         if "Create Game" in event.__dict__:
-            try:
+            #try:
                 pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
-            except TypeError:
+            #except TypeError:
                 pass  # todo Create an error Label to show the user the problem
-            except ValueError:
+            #except ValueError:
                 pass  # todo Create an error Label to show the user the problem
 
     def handle_event(self, event):
