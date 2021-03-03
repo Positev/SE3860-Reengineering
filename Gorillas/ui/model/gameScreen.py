@@ -45,6 +45,9 @@ class GameScreenModel(Model):
         self.arrow_image = pygame.transform.scale(self.arrow_image, (wind_width, self.WIND_HEIGHT), dest_surface=None)
         self.wind_pos = ((screen_size[0] - wind_width) / 2, (screen_size[1] - self.WIND_HEIGHT))
         wind_rect = pygame.Rect(self.wind_pos[0], self.wind_pos[1], wind_width, self.WIND_HEIGHT)
+        # Create a list to store destruction in
+        collision_list = ()
+        collision_num = 0
         # Blit the opjects to the background
         self.background.blit(self.sun.defaultImage, self.sun.rect)
         counter = 0
