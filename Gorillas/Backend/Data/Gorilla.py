@@ -13,7 +13,7 @@ HEIGHT = 50
 class Gorilla:
 
     def __init__(self, x_pos: float, y_pos: float, player_id: str, location: GorillaLocation, width=WIDTH,
-                 height=HEIGHT):
+                 height=HEIGHT, ):
         self._x_pos = x_pos
         self._y_pos = y_pos
         self._width = width
@@ -30,6 +30,9 @@ class Gorilla:
 
     def get_pos(self):
         return self._x_pos, self._y_pos
+
+    def get_throw_start_pos(self):
+        return self._x_pos, self._y_pos + self._height
 
     def get_size(self):
         return self._width, self._height

@@ -1,4 +1,7 @@
 import pygame
+
+from Backend.Data.Enumerators import ProjectileTravelDirection
+
 WIDTH = 30
 HEIGHT = 20
 
@@ -10,6 +13,8 @@ class Projectile:
                  start_y: float,
                  sender_id: str, 
                  sprite: int,
+                 direction: ProjectileTravelDirection,
+                 key: int = 0,
                  width = WIDTH,
                  height = HEIGHT):
 
@@ -19,10 +24,12 @@ class Projectile:
         self._start_y = start_y
         self._width = width
         self._height = height
+        self._direction = direction
         self._rotation = 0
         self._flight_time = 0
         self._current_x = 0
         self._current_y = 0
+        self._key = key
         self._sender_id = sender_id
         self._sprite = sprite
 
@@ -30,6 +37,7 @@ class Projectile:
 
     def __str__(self):
         out = [
+            f"Key: {self._key}",
             f"Initial Velocity: {self.initial_velocity}",
             f"Launch Angle: {self.launch_angle}",
             f"Flight Time: {self.flight_time}",
@@ -45,7 +53,7 @@ class Projectile:
         return ','.join(out)
 
     def copy(self):
-        p = Projectile(self.initial_velocity, self.launch_angle, self.start_x, self.start_y, self.sender_id, self.sprite)
+        p = Projectile(self.initial_velocity, self.launch_angle, self.start_x, self.start_y, self.sender_id, self.sprite, self._direction)
         p.__dict__.update(self.__dict__)
         return p
 
@@ -55,9 +63,15 @@ class Projectile:
     def get_size(self):
         return self._width, self._height
 
+    def direction(self):
+        return self._direction
+
     @property
     def initial_velocity(self) -> float:
         return self._initial_velocity
+
+    def key(self) -> int:
+        return self._key
 
     @initial_velocity.setter
     def initial_velocity(self, value: float):

@@ -13,6 +13,11 @@ class GorillaLocation(Enum):
     RIGHT = 1
 
 @unique
+class ProjectileTravelDirection(Enum):
+    LEFT = 0
+    RIGHT = 1
+
+@unique
 class ProjectileSprite(Enum):
     BANANA = 0
 

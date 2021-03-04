@@ -12,14 +12,14 @@ class CollisionHandler:
             for projectile in projectiles:
                 for player in players:
                     if pygame.sprite.collide_rect(projectile, player):
-                        collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(1)))
+                        if player.player_id != projectile.sender_id:
+                            collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(1), projectile.key(), player.player_id))
                 for building in buildings:
                     if pygame.sprite.collide_rect(projectile, building):
-                        collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(2)))
+                        collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(2), projectile.key(), building.key()))
             return collisions
-        elif not projectiles:
-            raise Exception("The list of projectiles is empty.")
-        elif not projectiles:
+        elif not buildings:
             raise Exception("The list of buildings is empty.")
-        else:
+        elif not players:
             raise Exception("The list of projectiles is empty.")
+        return []

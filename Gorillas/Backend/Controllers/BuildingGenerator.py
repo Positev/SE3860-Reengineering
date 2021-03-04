@@ -7,10 +7,14 @@ BUILDING_HEIGHT_SCREEN_PERCENT_RANGE = (40, 80)
 PERCENT_TO_DECIMAL = 1 / 100
 
 
+
 # TODO make buildings generate in a pattern such as decend left,
 # decent right, valley or crest instead of pure random values
 
 class BuildingGenerator:
+
+
+    GENERATED_BUILDING_COUNT = 0
 
     def generate_buildings(self, screen_size: Tuple[int, int]) -> List[Building]:
         generated_buildings = []
@@ -27,7 +31,8 @@ class BuildingGenerator:
                 0,
                 (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)),
                 building_width,
-                building_height)
+                building_height, key=self.GENERATED_BUILDING_COUNT)
+            self.GENERATED_BUILDING_COUNT += 1
 
             generated_buildings.append(new_building)
 
