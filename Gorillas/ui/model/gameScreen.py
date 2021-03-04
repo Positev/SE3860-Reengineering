@@ -1,8 +1,8 @@
 import pygame
-from model import Model
+from ui.model.model import Model
 from color import Color
-from elements.sprites.sun import Sun
-from elements.sprites.gorilla import Gorilla
+from ui.model.elements.sprites.sun import Sun
+from ui.model.elements.sprites.gorilla import Gorilla
 from Backend.Controllers.GameController import GameController
 
 
