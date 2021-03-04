@@ -1,5 +1,5 @@
 import pygame
-from Gorillas.color import Color
+from color import Color
 
 
 class Button(pygame.sprite.Sprite):

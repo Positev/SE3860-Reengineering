@@ -1,9 +1,9 @@
 import pygame
-from Gorillas.ui.model.model import Model
-from Gorillas.color import Color
-from Gorillas.ui.model.elements.button import Button
-from Gorillas.ui.model.elements.text_box import TextBox
-from Gorillas.ui.model.create_game_menu import CreateGameMenu
+from ui.model.model import Model
+from color import Color
+from ui.model.elements.button import Button
+from ui.model.elements.text_box import TextBox
+from ui.model.create_game_menu import CreateGameMenu
 
 
 class MainMenuModel(Model):
