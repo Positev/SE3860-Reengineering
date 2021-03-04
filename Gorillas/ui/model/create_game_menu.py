@@ -92,10 +92,16 @@ class CreateGameMenu(Model):
     def create_game(self):
         """Returns the game menu from the name, gravity, and score text fields
         Throws TypeError if gravity is not a float or if score is not an int"""
-        player_one_name = self.player_one_edit_box.text
-        player_two_name = self.player_two_edit_box.text
-        gravity = float(self.gravity_edit_box.text)
-        score = int(self.score_edit_box.text)
+        try:
+            player_one_name = self.player_one_edit_box.text
+            player_two_name = self.player_two_edit_box.text
+            gravity = float(self.gravity_edit_box.text)
+            score = int(self.score_edit_box.text)
+        except TypeError:
+            pass  # todo Create an error Label to show the user the problem
+
+        except ValueError:
+            pass  # todo Create an error Label to show the user the problem
         return GameScreenModel(self.screen_size, player_one_name, player_two_name)
 
     def get_next_edit_box(self):
@@ -131,12 +137,7 @@ class CreateGameMenu(Model):
     def do_user_event(self, event):
         """If the user event is create game, a game model will try to be added to the event queue"""
         if "Create Game" in event.__dict__:
-            try:
-                pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
-            except TypeError:
-                pass  # todo Create an error Label to show the user the problem
-            except ValueError:
-                pass  # todo Create an error Label to show the user the problem
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
 
     def handle_event(self, event):
         """Handle the pygame event"""
