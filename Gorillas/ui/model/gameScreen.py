@@ -20,8 +20,10 @@ class GameScreenModel(Model):
         self.render.append(pygame.sprite.Group())  # Main Layer
         self.render.append(pygame.sprite.Group())  # UI Layer
 
+        # coordinate_adapter = CoordinateAdapter()
         self.game_controller = GameController(player_1_id, player_2_id, screen_size)
         game_state = self.game_controller.next_frame()
+        # game_state = coordinate_adapter.adapt(self.game_controller.next_frame())
 
         # Create the background
         self.background = pygame.Surface(screen_size)

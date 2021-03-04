@@ -13,6 +13,6 @@ class Sun(pygame.sprite.Sprite):
         # Create default image
         self.image = pygame.image.load("Sprites/Sun/sun_doug_2.png")
         # Create optional turn happening image for later development
-        # self.thrownImage = pygame.image.load("Sprites/Sun/sun_doug_1.png")
+        # self.thrownImage = pygame.image.load("Sprites/Sun/sun_doug_1.png") #TODO Make Doug sad when banana is thrown
         self.image = scale(self.image, (int(width), int(height)))
         # self.thrownImage = scale(self.thrownImage, (width, height))

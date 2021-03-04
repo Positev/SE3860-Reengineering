@@ -14,6 +14,6 @@ class Gorilla(pygame.sprite.Sprite):
         self.image = pygame.image.load("Sprites/Doug/doug.png")
         self.leftImage = pygame.image.load("Sprites/Doug/dougLeft.png")
         self.rightImage = pygame.image.load("Sprites/Doug/dougRight.png")
-        scale(self.image, (int(size[0]), int(size[1])))
+        self.image = scale(self.image, (int(size[0]), int(size[1])))
         # scale(self.LeftImage, size)
         # scale(self.RightImage, size)
