@@ -131,11 +131,11 @@ class CreateGameMenu(Model):
     def do_user_event(self, event):
         """If the user event is create game, a game model will try to be added to the event queue"""
         if "Create Game" in event.__dict__:
-            #try:
+            try:
                 pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
-            #except TypeError:
+            except TypeError:
                 pass  # todo Create an error Label to show the user the problem
-            #except ValueError:
+            except ValueError:
                 pass  # todo Create an error Label to show the user the problem
 
     def handle_event(self, event):
