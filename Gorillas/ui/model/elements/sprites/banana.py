@@ -10,4 +10,4 @@ class Banana(pygame.sprite.Sprite):
         # Create rect
         self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         # Create image
-        self.defaultImage = pygame.image.Load("/Sprites/banana.png")
+        self.defaultImage = pygame.image.load("/Sprites/banana.png")

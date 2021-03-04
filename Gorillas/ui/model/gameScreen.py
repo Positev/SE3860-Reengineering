@@ -29,9 +29,9 @@ class GameScreenModel(Model):
         sun_y_pos = (screen_size[1] - sun_height) / 10
         self.sun = Sun(sun_width, sun_height, sun_x_pos, sun_y_pos)
         # Create the buildings
-        self.buildings = ()
+        self.buildings = []
         for building in game_state.building:
-            self.buildings.add(pygame.Rect(building.x_pos, screen_size[1] - building.height, building.width, building.height))
+            self.buildings.append(pygame.Rect(building.x_pos, screen_size[1] - building.height, building.width, building.height))
         # Create player one's gorilla
         self.gorilla_one = self.create_gorilla(game_state.gorillas[0], game_state.building[0])
         # Create player two's gorilla
@@ -40,9 +40,9 @@ class GameScreenModel(Model):
             Here's more space 
         """
         # Create the wind arrow
-        self.arrow_image = pygame.image.load("../../../../Sprites/arrow.png")
+        self.arrow_image = pygame.image.load("Sprites/arrow.png")
         wind_width = game_state.wind.velocity * self.WIND_DEFAULT_WIDTH
-        self.arrow_image = pygame.transform.scale(self.arrow_image, (wind_width, self.WIND_HEIGHT), dest_surface=None)
+        self.arrow_image = pygame.transform.scale(self.arrow_image, (wind_width, self.WIND_HEIGHT))
         self.wind_pos = ((screen_size[0] - wind_width) / 2, (screen_size[1] - self.WIND_HEIGHT))
         wind_rect = pygame.Rect(self.wind_pos[0], self.wind_pos[1], wind_width, self.WIND_HEIGHT)
         # Create a list to store destruction in
@@ -58,6 +58,7 @@ class GameScreenModel(Model):
         self.background.blit(self.gorilla_two.defaultImage, self.gorilla_two.rect)
         """Space to add other UI elements in later when Adam is ready"""
         self.background.blit(self.arrow_image, wind_rect)
+
 
     def create_gorilla(self, gorilla, building):
         """Creates a UI Gorilla object from given data"""
