@@ -1,38 +1,50 @@
 from typing import Tuple, List
 import math
 
+from Backend.Data.Enumerators import ProjectileTravelDirection
 from Backend.Data.Projectile import Projectile
 
 PATH_STEP_PER_FRAME = 1
 GRAVITY = .001
-#TODO Docs
-#TODO Write tests for this
+
+
+
+# TODO Docs
+# TODO Write tests for this
 class ProjectileHandler:
 
+    CREATED_PROJECTILES = 0
+
     def __init__(self, wind):
-        #TODO implement when all sub-controllers are ready
+        # TODO implement when all sub-controllers are ready
         self._game_state = {}
         self.wind = wind
 
     def _compute_next_position(self, projectile):
         projectile.increment_flight_time()
-        #TODO convert to use wind object when implemented
+        projectile_direction = -1 if projectile.direction() == ProjectileTravelDirection.LEFT else 1
+        # TODO convert to use wind object when implemented
         wind_velocity = 1
 
-        #y = y_0 + V_0_y * t + (g/2)*t^2
-        #x += (PATH_STEP_PER_FRAME - wind_velocity) * t
+        # y = y_0 + V_0_y * t + (g/2)*t^2
+        # x += (PATH_STEP_PER_FRAME - wind_velocity) * t
         cosine = math.cos(math.radians(projectile.launch_angle))
         sine = math.sin(math.radians(projectile.launch_angle))
 
         vx = projectile.initial_velocity * cosine
         vy = projectile.initial_velocity * sine
 
-        new_x = vx * projectile.flight_time + wind_velocity + projectile.start_x
+        new_x = projectile_direction * vx * projectile.flight_time + wind_velocity + projectile.start_x
         new_y = vy * projectile.flight_time - (GRAVITY / 2) * (projectile.flight_time ** 2) + projectile.start_y
 
         projectile.current_x = new_x
         projectile.current_y = new_y
         return projectile
+
+    def projectile_out_of_screen(self, projectile, screen_size):
+        cur_x, cur_y = projectile.get_pos()
+        w,h = screen_size
+        return cur_x < 0 or cur_x > w or 0 > cur_y
 
     # This function will step through each projectile and update thier position
     def move_projectiles(self, projectiles: List[Projectile]) -> List[Projectile]:
@@ -44,12 +56,10 @@ class ProjectileHandler:
 
         return new_projectiles
 
-
     # This function just creates a new projectile and adds it to the list of projectiles
-    def launch_projectile(self, velocity: float, angle:float, start_pos:Tuple[float, float], sprite: int, sender_id: str) -> Projectile:
-        
-        new_projectile = Projectile(velocity, angle,start_pos[0], start_pos[1],sender_id, sprite)
-        return new_projectile
-    
+    def launch_projectile(self, velocity: float, angle: float,  start_pos: Tuple[float, float], sprite: int,
+                          sender_id: str, travel_direction: ProjectileTravelDirection) -> Projectile:
 
-  
+        new_projectile = Projectile(velocity, angle, start_pos[0], start_pos[1], sender_id, sprite,travel_direction, key=self.CREATED_PROJECTILES)
+        self.CREATED_PROJECTILES += 1
+        return new_projectile
