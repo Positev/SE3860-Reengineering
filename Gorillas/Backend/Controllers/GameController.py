@@ -10,6 +10,7 @@ from Backend.Data.GameState import GameState
 from Backend.Data.Gorilla import Gorilla
 from Backend.Data.ScoreKeeper import ScoreKeeper
 from Backend.Data.Wind import Wind
+from Backend.Data.WorldDestruction import WorldDestruction
 
 
 class GameController:
@@ -27,7 +28,7 @@ class GameController:
         player_2_pos = buildings[-2].top_center()
         player_2 = Gorilla(player_2_pos[0], player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
 
-        score_keeper = ScoreKeeper()
+        score_keeper = ScoreKeeper(player_1_id, player_2_id)
         wind = Wind(velocity=1)
         turn_active = False
 
@@ -57,6 +58,26 @@ class GameController:
         gorilla_controller = GorillaController(self._game_state.active_player())
         gorilla_controller.throw()
 
+    def _handle_collision(self, collision, projectiles):
+        print("Collision Occured")
+        print(f"\t{collision}")
+        projectileForCollision = None
+        for projectile in projectiles:
+            if projectile.key() == collision.projectile_id():
+                print(f"\tprojectile -> {projectile}")
+                projectileForCollision = projectile
+        for collider in self._game_state.building:
+            if collider.key() == collision.collided_id():
+                self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 30, 0, 0, 15))
+                print(f"\tCollided With -> {collider}")
+        for player in self._game_state.gorillas:
+            if player.player_id == collision.collided_id():
+                self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 45, 0, 0, 15))
+                self._game_state.score.record_win(projectileForCollision.sender_id)
+                print(f"\t{player.player_id} has been hit!")
+
+        projectiles.remove(projectileForCollision)
+
     def next_frame(self):
 
         projectile_handler = ProjectileHandler(self._game_state.wind)
@@ -72,15 +93,8 @@ class GameController:
 
         if len(collisions) > 0:
             for collision in collisions:
-                print("Collision Occured")
-                print(f"\t{collision}")
-                for projectile in updated_projectiles:
-                    if projectile.key() == collision.projectile_id():
-                        print(f"\tprojectile -> {projectile}")
-                        updated_projectiles.remove(projectile)
-                for collider in self._game_state.building:
-                    if collider.key() == collision.collided_id():
-                        print(f"\tCollided With -> {collider}")
+                self._handle_collision(collision)
+
             self._game_state.next_player()
             self._game_state.turn_active = False
         elif any([projectile_handler.projectile_out_of_screen(proj, screen_size) for proj in updated_projectiles]):
