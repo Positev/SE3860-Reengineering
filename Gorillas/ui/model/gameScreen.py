@@ -27,9 +27,9 @@ class GameScreenModel(Model):
         self.render.append(pygame.sprite.Group())  # Main Layer
         self.render.append(pygame.sprite.Group())  # UI Layer
 
-        coordinate_adapter = CoordinateAdapter(screen_size)
+        self.coordinate_adapter = CoordinateAdapter(screen_size)
         self.game_controller = GameController(player_1_id, player_2_id, screen_size)
-        self.game_state = coordinate_adapter.adapt(self.game_controller.next_frame())
+        self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
 
         # Create the background
         self.background = pygame.Surface(screen_size)
@@ -107,6 +107,7 @@ class GameScreenModel(Model):
         self.render[2].add(self.angle_edit_box)
         self.render[2].add(self.velocity_label)
         self.render[2].add(self.velocity_edit_box)
+        self.active_edit_box = self.angle_edit_box
 
         # Create the wind arrow
         self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
@@ -130,12 +131,14 @@ class GameScreenModel(Model):
         self.background.blit(self.projectile.image, self.projectile.rect)
         pygame.display.update()
 
-    def move_player_ui(self):
+    def reset_player_ui(self):
         player = self.game_state._player_turn  # todo change to not use private member
         self.angle_label.rect.topleft = self.angle_label_positions[player]
         self.angle_edit_box.rect.topleft = self.angle_edit_box_positions[player]
         self.velocity_label.rect.topleft = self.velocity_label_positions[player]
         self.velocity_edit_box.rect.topleft = self.velocity_edit_box_positions[player]
+        self.angle_edit_box.text = ""
+        self.velocity_edit_box = ""
 
     def get_player_throw(self):
         try:
@@ -194,5 +197,25 @@ class GameScreenModel(Model):
 
         """Room to update UI Elements when working on combining all branches into a coherent branch"""
 
-        # Update the background
-        pygame.display.update()
+    def do_key_event(self, event):
+        """If the key press is enter go to the next text box otherwise send the event to the textbox"""
+        if event.key == pygame.K_RETURN:
+            if self.active_edit_box == self.velocity_edit_box:
+                throw = self.get_player_throw()
+                angle = throw[0]
+                velocity = throw[1]
+                self.game_controller.throw_projectile(angle, velocity)
+                self.active_edit_box = self.angle_edit_box
+                self.reset_player_ui()
+            else:
+                self.active_edit_box = self.velocity_edit_box
+        else:
+            self.active_edit_box.handle_event(event)
+
+    def handle_event(self, event):
+        """Handle the pygame event"""
+        if event.type == pygame.KEYDOWN:
+            self.do_key_event(event)
+
+    def update(self):
+        self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
