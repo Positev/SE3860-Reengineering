@@ -14,18 +14,16 @@ from Backend.Data.Wind import Wind
 
 class GameController:
 
-
-    #TODO add gravity parameter
-    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int,int], ):
+    # TODO add gravity parameter
+    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], ):
         building_generator = BuildingGenerator()
         buildings = building_generator.generate_buildings(screen_size)
 
         player_1_pos = buildings[1].top_center()
-        player_1 = Gorilla(player_1_pos[0],player_1_pos[1], player_1_id, GorillaLocation.LEFT)
-
+        player_1 = Gorilla(player_1_pos[0], player_1_pos[1], player_1_id, GorillaLocation.LEFT)
 
         player_2_pos = buildings[-2].top_center()
-        player_2 = Gorilla(player_2_pos[0],player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
+        player_2 = Gorilla(player_2_pos[0], player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
 
         score_keeper = ScoreKeeper()
         wind = Wind(velocity=1)
@@ -33,7 +31,7 @@ class GameController:
 
         self._game_state = GameState(
             buildings,
-            [player_1,player_2],
+            [player_1, player_2],
             [],
             [],
             score_keeper,
@@ -91,12 +89,12 @@ class GameController:
             self._game_state.next_player()
             self._game_state.turn_active = False
 
-            #TODO handle colliion result
+            # TODO handle colliion result
             #   Remove active projectile
             #   add world destruction
             #   trigger game over if player hit
 
-            #TODO Handle turn change when projectile is removed
+            # TODO Handle turn change when projectile is removed
 
         self._game_state.active_projectiles = updated_projectiles
 
@@ -106,29 +104,43 @@ class GameController:
 
         return self._game_state.copy()
 
-
-    
     @property
     def game_state(self) -> float:
-        #TODO return copy of game state
+        # TODO return copy of game state
         return self._game_state.copy()
 
 
 if __name__ == '__main__':
-    screen_size = (400,600)
+    screen_size = (400, 600)
     controller = GameController("player_1", "player_2", screen_size)
     coordinate_adapter = CoordinateAdapter(screen_size)
 
-    while True:
 
+    with open("buildings.txt", 'w+') as output:
         frame = controller.next_frame()
-        print(frame)
-        print()
-        if not frame.turn_active:
-            print(f"{frame.active_player().player_id}, throw your banana.")
-            velocity = float(input("Input a velocity: "))
-            launch_angle = float(input("Input a launch angle: "))
-            controller.throw_projectile(launch_angle, velocity)
+        for b in frame.building:
+            output.write(b.graphable())
+            output.write("\n")
 
+    with open("p1.csv", 'w+') as output1:
+        with open("p2.csv", 'w+') as output2:
+
+            while True:
+
+                frame = controller.next_frame()
+                print(frame)
+                print()
+                for proj in frame.active_projectiles:
+                    pos = proj.get_pos()
+                    if proj.sender_id == "player_1":
+                        output1.write(f"{pos[0]}, {pos[1]}" + "\n")
+                    else:
+                        output2.write(f"{pos[0]}, {pos[1]}" + "\n")
+
+                if not frame.turn_active:
+                    print(f"{frame.active_player().player_id}, throw your banana.")
+                    velocity = float(input("Input a velocity: "))
+                    launch_angle = float(input("Input a launch angle: "))
+                    controller.throw_projectile(launch_angle, velocity)
 
 
