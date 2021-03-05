@@ -15,9 +15,11 @@ from Backend.Data.Wind import Wind
 class GameController:
 
     # TODO add gravity parameter
-    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], ):
+    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], gravity: float = 1):
         building_generator = BuildingGenerator()
         buildings = building_generator.generate_buildings(screen_size)
+
+        ProjectileHandler.GRAVITY = gravity
 
         player_1_pos = buildings[1].top_center()
         player_1 = Gorilla(player_1_pos[0], player_1_pos[1], player_1_id, GorillaLocation.LEFT)
@@ -112,7 +114,10 @@ class GameController:
 
 if __name__ == '__main__':
     screen_size = (400, 600)
-    controller = GameController("player_1", "player_2", screen_size)
+    gravity = input("Enter Gravity: ")
+    p1 = input("Enter a name for player 1: ")
+    p2 = input("Enter a name for player 2: ")
+    controller = GameController(p1, p2, screen_size)
     coordinate_adapter = CoordinateAdapter(screen_size)
 
 
