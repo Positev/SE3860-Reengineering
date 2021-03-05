@@ -1,5 +1,7 @@
 import pygame
 
+from ui.model.elements.sprites.banana import Banana
+from ui.model.elements.sprites.collisions import Collisions
 from ui.model.elements.sprites.windArrow import WindArrow
 from ui.model.model import Model
 from color import Color
@@ -60,8 +62,13 @@ class GameScreenModel(Model):
         self.wind_arrow = WindArrow(game_state.wind.direction, game_state.wind.velocity, screen_size)
         self.render[2].add(self.wind_arrow)
         # Create a list to store destruction in
-        collision_list = ()
-        collision_num = 0
+        self.collision_list = ()
+        self.collision_num = 0
+        # Create a projectile placeholder to use when updating the scene
+        # May need to update in later revisions if there are multiple projectiles
+        self.projectile = Banana((30, 20), (0, 0))
+        self.projectile.transparent()
+        self.render[1].add(self.projectile)
         # Blit the objects to the background
         self.background.blit(self.sun.image, self.sun.rect)
         for building in self.buildings:
@@ -70,6 +77,7 @@ class GameScreenModel(Model):
         self.background.blit(self.gorilla_two.image, self.gorilla_two.rect)
         """Space to add other UI elements in later when Adam is ready"""
         self.background.blit(self.wind_arrow.image, self.wind_arrow.rect)
+        self.background.blit(self.projectile.image, self.projectile.rect)
         pygame.display.update()
 
     def create_gorilla(self, gorilla, building, image):
@@ -82,3 +90,43 @@ class GameScreenModel(Model):
 
     def update_frame(self, frame):
         """Updates the background to be a new frame of the game"""
+        # Update the gorillas
+        if frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.ARM_DOWN:
+            self.gorilla_one.image = self.GORILLA_IMAGE
+        elif frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.LEFT_ARM_UP:
+            self.gorilla_one.image = self.GORILLA_LEFT
+        elif frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.RIGHT_ARM_UP:
+            self.gorilla_one.image = self.GORILLA_RIGHT
+
+        if frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.ARM_DOWN:
+            self.gorilla_two.image = self.GORILLA_IMAGE
+        elif frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.LEFT_ARM_UP:
+            self.gorilla_two.image = self.GORILLA_LEFT
+        elif frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.RIGHT_ARM_UP:
+            self.gorilla_two.image = self.GORILLA_RIGHT
+
+        # Update the projectile
+        if frame.turn_active():
+            projectile_pos = (frame.active_projectiles[0].current_x, frame.active_projectiles[0].current_y)
+            self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0], self.projectile.size[1])
+            self.projectile.visible()
+
+        # Create collisions if a new collision has appeared
+        if self.collision_num < len(frame.destruction):
+            new_collision = Collisions(frame.destruction[self.collision_num])
+            self.collision_list.add(new_collision)
+            self.render[1].add(new_collision)
+            self.background.blit(self.collision_list[self.collision_num].image, self.sollision_list[self.collision_num].rect)
+            self.collision_num = self.collision_num + 1
+
+        # Update the wind
+        new_width = frame.wind.velocity * self.wind_arrow.WIND_DEFAULT_WIDTH
+        self.wind_arrow.image = pygame.transform.scale(self.wind_arrow.image, (new_width, self.wind_arrow.WIND_HEIGHT))
+        if self.wind_arrow.direction != frame.wind.direction:
+            self.wind_arrow.image = pygame.transform.flip(self.wind_arrow.image, True, False)
+        self.wind_arrow.rect = pygame.Rect(self.wind_arrow.wind_pos[0], self.wind_arrow.wind_pos[1], new_width, self.wind_arrow.WIND_HEIGHT)
+
+        """Room to update UI Elements when working on combining all branches into a coherent branch"""
+
+        # Update the background
+        pygame.display.update()

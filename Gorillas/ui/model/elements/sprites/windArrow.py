@@ -16,3 +16,4 @@ class WindArrow(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
         self.wind_pos = ((screen_size[0] - wind_width) / 2, screen_size[1] - self.WIND_HEIGHT)
         self.rect = pygame.Rect(self.wind_pos[0], self.wind_pos[1], wind_width, self.WIND_HEIGHT)
+        self.direction = direction
