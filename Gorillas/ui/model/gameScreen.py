@@ -51,10 +51,12 @@ class GameScreenModel(Model):
             self.render[0].add(new_building)
             self.buildings.append(new_building)
         # Create player one's gorilla
-        self.gorilla_one = self.create_gorilla(self.game_state.gorillas[0], self.game_state.building[0], self.GORILLA_IMAGE)
+        self.gorilla_one = self.create_gorilla(self.game_state.gorillas[0], self.game_state.building[0],
+                                               self.GORILLA_IMAGE)
         self.render[1].add(self.gorilla_one)
         # Create player two's gorilla
-        self.gorilla_two = self.create_gorilla(self.game_state.gorillas[1], self.game_state.building[0], self.GORILLA_IMAGE)
+        self.gorilla_two = self.create_gorilla(self.game_state.gorillas[1], self.game_state.building[0],
+                                               self.GORILLA_IMAGE)
         self.render[1].add(self.gorilla_two)
         """Implement the Input UI and Score UI when Adam has them ready
             Here's more space 
@@ -82,7 +84,8 @@ class GameScreenModel(Model):
             (screen_size[0] - angle_label_size[0] - edit_box_size[0], player2_score_pos[1] + angle_label_size[1]))
         self.velocity_label_positions = (
             (0, self.angle_label_positions[0][1] + velocity_label_size[1]),
-            (screen_size[0] - velocity_label_size[0] - edit_box_size[0], self.angle_label_positions[1][1] + velocity_label_size[1]))
+            (screen_size[0] - velocity_label_size[0] - edit_box_size[0],
+             self.angle_label_positions[1][1] + velocity_label_size[1]))
         self.angle_edit_box_positions = (
             (self.angle_label_positions[0][0] + angle_label_size[0], self.angle_label_positions[0][1]),
             (self.angle_label_positions[1][0] + angle_label_size[0], self.angle_label_positions[1][1]))
@@ -95,14 +98,15 @@ class GameScreenModel(Model):
         self.velocity_label = \
             TextBox(ui_font, velocity_label_size, self.velocity_label_positions[0], text=velocity_text)
 
-        self.angle_edit_box = EditBox(ui_font, edit_box_size, self.angle_edit_box_positions[0], back_ground_color=Color.LIGHT_GRAY)
-        self.velocity_edit_box = EditBox(ui_font, edit_box_size, self.velocity_edit_box_positions[0], back_ground_color=Color.LIGHT_GRAY)
+        self.angle_edit_box = EditBox(ui_font, edit_box_size, self.angle_edit_box_positions[0],
+                                      back_ground_color=Color.LIGHT_GRAY)
+        self.velocity_edit_box = EditBox(ui_font, edit_box_size, self.velocity_edit_box_positions[0],
+                                         back_ground_color=Color.LIGHT_GRAY)
 
         self.render[2].add(self.angle_label)
         self.render[2].add(self.angle_edit_box)
         self.render[2].add(self.velocity_label)
         self.render[2].add(self.velocity_edit_box)
-
 
         # Create the wind arrow
         self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
@@ -127,11 +131,17 @@ class GameScreenModel(Model):
         pygame.display.update()
 
     def move_player_ui(self):
-        player = self.game_state._player_turn #todo change to not use private member
+        player = self.game_state._player_turn  # todo change to not use private member
         self.angle_label.rect.topleft = self.angle_label_positions[player]
         self.angle_edit_box.rect.topleft = self.angle_edit_box_positions[player]
         self.velocity_label.rect.topleft = self.velocity_label_positions[player]
         self.velocity_edit_box.rect.topleft = self.velocity_edit_box_positions[player]
+
+    def get_player_throw(self):
+        try:
+            return int(self.angle_edit_box.text), int(self.velocity_edit_box.text)
+        except ValueError:
+            return 0, 0  # Todo Change to error message
 
     def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
@@ -161,7 +171,8 @@ class GameScreenModel(Model):
         # Update the projectile
         if frame.turn_active():
             projectile_pos = (frame.active_projectiles[0].current_x, frame.active_projectiles[0].current_y)
-            self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0], self.projectile.size[1])
+            self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0],
+                                               self.projectile.size[1])
             self.projectile.visible()
 
         # Create collisions if a new collision has appeared
@@ -169,7 +180,8 @@ class GameScreenModel(Model):
             new_collision = Collisions(frame.destruction[self.collision_num])
             self.collision_list.add(new_collision)
             self.render[1].add(new_collision)
-            self.background.blit(self.collision_list[self.collision_num].image, self.sollision_list[self.collision_num].rect)
+            self.background.blit(self.collision_list[self.collision_num].image,
+                                 self.sollision_list[self.collision_num].rect)
             self.collision_num = self.collision_num + 1
 
         # Update the wind
@@ -177,7 +189,8 @@ class GameScreenModel(Model):
         self.wind_arrow.image = pygame.transform.scale(self.wind_arrow.image, (new_width, self.wind_arrow.WIND_HEIGHT))
         if self.wind_arrow.direction != frame.wind.direction:
             self.wind_arrow.image = pygame.transform.flip(self.wind_arrow.image, True, False)
-        self.wind_arrow.rect = pygame.Rect(self.wind_arrow.wind_pos[0], self.wind_arrow.wind_pos[1], new_width, self.wind_arrow.WIND_HEIGHT)
+        self.wind_arrow.rect = pygame.Rect(self.wind_arrow.wind_pos[0], self.wind_arrow.wind_pos[1], new_width,
+                                           self.wind_arrow.WIND_HEIGHT)
 
         """Room to update UI Elements when working on combining all branches into a coherent branch"""
 
