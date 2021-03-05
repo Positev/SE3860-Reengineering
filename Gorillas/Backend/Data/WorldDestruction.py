@@ -7,6 +7,14 @@ class WorldDestruction:
         self.__minor_axis_dx= minor_axis_dx
         self.__minor_axis_dy= minor_axis_dy
 
+    def copy(self):
+        return WorldDestruction(self.center_x,
+                                self.center_y,
+                                self.major_axis_dx,
+                                self.major_axis_dy,
+                                self.minor_axis_dx,
+                                self.minor_axis_dy)
+
     def __str__(self):
         out = [
             f"Center: ({self.center_x}, {self.center_y})"
@@ -15,6 +23,9 @@ class WorldDestruction:
         ]
 
         return ','.join(out)
+
+    def get_center(self):
+        return self.__center_x, self.__center_y
 
     @property
     def center_x(self):

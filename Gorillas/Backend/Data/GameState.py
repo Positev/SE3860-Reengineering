@@ -22,6 +22,23 @@ class GameState:
         else:
              raise Exception("Wrong type parameter.")
 
+
+    def copy(self):
+        gs =  GameState(
+            [build.copy() for build in self.__building],
+            [g.copy() for g in self.__gorillas],
+            [p.copy() for p in self.active_projectiles],
+            [d.copy() for d in self.destruction],
+            self.score.copy(),
+            self.wind.copy(),
+            self.turn_active
+        )
+
+        gs.__dict__.update(self.__dict__)
+        return gs
+
+
+
     @property
     def building(self):
         return self.__building
@@ -37,7 +54,9 @@ class GameState:
         return self.gorillas[self._player_turn]
 
     def next_player(self):
-        self._player_turn = self._player_turn % len(self.gorillas)
+        print(self._player_turn)
+        print(len(self.gorillas))
+        self._player_turn = self._player_turn % len(self.gorillas) - 1
 
     @property
     def gorillas(self):
@@ -122,3 +141,4 @@ class GameState:
         ]
 
         return '\n'.join(out)
+
