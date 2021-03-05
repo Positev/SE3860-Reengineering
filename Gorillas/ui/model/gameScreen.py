@@ -23,7 +23,7 @@ class GameScreenModel(Model):
 
         # coordinate_adapter = CoordinateAdapter()
         self.game_controller = GameController(player_1_id, player_2_id, screen_size)
-        game_state = self.game_controller.next_frame()
+        self.game_state = self.game_controller.next_frame()
         # game_state = coordinate_adapter.adapt(self.game_controller.next_frame())
 
         # Create the background
@@ -39,17 +39,17 @@ class GameScreenModel(Model):
         self.render[1].add(self.sun)
         # Create the buildings
         self.buildings = []
-        for building in game_state.building:
+        for building in self.game_state.building:
             building_pos = (building.x_pos, screen_size[1] - building.height)
             building_size = (building.width, building.height)
             new_building = Building(building.color, building_pos, building_size)
             self.render[0].add(new_building)
             self.buildings.append(new_building)
         # Create player one's gorilla
-        self.gorilla_one = self.create_gorilla(game_state.gorillas[0], game_state.building[0])
+        self.gorilla_one = self.create_gorilla(self.game_state.gorillas[0], self.game_state.building[0])
         self.render[1].add(self.gorilla_one)
         # Create player two's gorilla
-        self.gorilla_two = self.create_gorilla(game_state.gorillas[1], game_state.building[0])
+        self.gorilla_two = self.create_gorilla(self.game_state.gorillas[1], self.game_state.building[0])
         self.render[1].add(self.gorilla_two)
         """Implement the Input UI and Score UI when Adam has them ready
             Here's more space 
@@ -64,8 +64,8 @@ class GameScreenModel(Model):
         player2_score_pos = (screen_size[0] - scoreSize[0], 0)
         self.player2ScoreBox = TextBox(ui_font, scoreSize, player2_score_pos, text="Score: 0")
 
-        self.render[0].add(self.player1ScoreBox)
-        self.render[0].add(self.player2ScoreBox)
+        self.render[2].add(self.player1ScoreBox)
+        self.render[2].add(self.player2ScoreBox)
 
         angle_text = "Angle: "
         velocity_text = "Velocity: "
@@ -73,28 +73,34 @@ class GameScreenModel(Model):
         velocity_label_size = pygame.font.Font.size(ui_font, velocity_text)
         edit_box_size = pygame.font.Font.size(ui_font, "00")
         self.angle_label_positions = (
-            (0, player1_score_pos[1] + angle_label_size[1]),
+            (0, player1_score_pos[1] + scoreSize[1]),
             (screen_size[0] - angle_label_size[0] - edit_box_size[0], player2_score_pos[1] + angle_label_size[1]))
         self.velocity_label_positions = (
             (0, self.angle_label_positions[0][1] + velocity_label_size[1]),
             (screen_size[0] - velocity_label_size[0] - edit_box_size[0], self.angle_label_positions[1][1] + velocity_label_size[1]))
         self.angle_edit_box_positions = (
-            (self.angle_label_positions[0][0] + angle_label_size[0], self.angle_label_positions[0][0]),
+            (self.angle_label_positions[0][0] + angle_label_size[0], self.angle_label_positions[0][1]),
             (self.angle_label_positions[1][0] + angle_label_size[0], self.angle_label_positions[1][1]))
         self.velocity_edit_box_positions = (
             (self.velocity_label_positions[0][0] + velocity_label_size[0], self.velocity_label_positions[0][1]),
             (self.velocity_label_positions[1][0] + velocity_label_size[0], self.velocity_label_positions[1][1]))
 
         self.angle_label = \
-            TextBox(ui_font, angle_label_size, self.angle_label_positions[1], text=angle_text)
+            TextBox(ui_font, angle_label_size, self.angle_label_positions[0], text=angle_text)
         self.velocity_label = \
-            TextBox(ui_font, velocity_label_size, self.velocity_label_positions[1], text=velocity_text)
+            TextBox(ui_font, velocity_label_size, self.velocity_label_positions[0], text=velocity_text)
 
-        self.angle_edit_box = EditBox(ui_font, edit_box_size, self.angle_edit_box_positions[1], back_ground_color=Color.LIGHT_GRAY)
-        self.velocity_edit_box = EditBox(ui_font, edit_box_size, self.velocity_edit_box_positions[1], back_ground_color=Color.LIGHT_GRAY)
+        self.angle_edit_box = EditBox(ui_font, edit_box_size, self.angle_edit_box_positions[0], back_ground_color=Color.LIGHT_GRAY)
+        self.velocity_edit_box = EditBox(ui_font, edit_box_size, self.velocity_edit_box_positions[0], back_ground_color=Color.LIGHT_GRAY)
+
+        self.render[2].add(self.angle_label)
+        self.render[2].add(self.angle_edit_box)
+        self.render[2].add(self.velocity_label)
+        self.render[2].add(self.velocity_edit_box)
+
 
         # Create the wind arrow
-        self.wind_arrow = WindArrow(game_state.wind.direction, game_state.wind.velocity, screen_size)
+        self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
         self.render[2].add(self.wind_arrow)
         # Create a list to store destruction in
         collision_list = ()
@@ -108,6 +114,14 @@ class GameScreenModel(Model):
         """Space to add other UI elements in later when Adam is ready"""
         self.background.blit(self.wind_arrow.image, self.wind_arrow.rect)
         pygame.display.update()
+
+    def move_player_ui(self):
+        player = self.game_state._player_turn #todo change to not use private member
+        self.angle_label.rect.topleft = self.angle_label_positions[player]
+        self.angle_edit_box.rect.topleft = self.angle_edit_box_positions[player]
+        self.velocity_label.rect.topleft = self.velocity_label_positions[player]
+        self.velocity_edit_box.rect.topleft = self.velocity_edit_box_positions[player]
+
 
     def create_gorilla(self, gorilla, building):
         """Creates a UI Gorilla object from given data"""
