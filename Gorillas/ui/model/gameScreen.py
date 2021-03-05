@@ -7,12 +7,16 @@ from ui.model.elements.sprites.sun import Sun
 from ui.model.elements.sprites.gorilla import Gorilla
 from Backend.Controllers.GameController import GameController
 from ui.model.elements.sprites.building import Building
+from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
 
 
 class GameScreenModel(Model):
     """The main screen of the game"""
 
     BACKGROUND_COLOR = Color.BLUE
+    GORILLA_IMAGE = pygame.image.load("Sprites/Doug/doug.png")
+    GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
+    GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
 
     def __init__(self, screen_size, player_1_id, player_2_id):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
@@ -20,10 +24,9 @@ class GameScreenModel(Model):
         self.render.append(pygame.sprite.Group())  # Main Layer
         self.render.append(pygame.sprite.Group())  # UI Layer
 
-        # coordinate_adapter = CoordinateAdapter()
+        coordinate_adapter = CoordinateAdapter(screen_size)
         self.game_controller = GameController(player_1_id, player_2_id, screen_size)
-        game_state = self.game_controller.next_frame()
-        # game_state = coordinate_adapter.adapt(self.game_controller.next_frame())
+        game_state = coordinate_adapter.adapt(self.game_controller.next_frame())
 
         # Create the background
         self.background = pygame.Surface(screen_size)
@@ -39,16 +42,16 @@ class GameScreenModel(Model):
         # Create the buildings
         self.buildings = []
         for building in game_state.building:
-            building_pos = (building.x_pos, screen_size[1] - building.height)
+            building_pos = (building.x_pos, building.y_pos - building.height)
             building_size = (building.width, building.height)
             new_building = Building(building.color, building_pos, building_size)
             self.render[0].add(new_building)
             self.buildings.append(new_building)
         # Create player one's gorilla
-        self.gorilla_one = self.create_gorilla(game_state.gorillas[0], game_state.building[0])
+        self.gorilla_one = self.create_gorilla(game_state.gorillas[0], game_state.building[0], self.GORILLA_IMAGE)
         self.render[1].add(self.gorilla_one)
         # Create player two's gorilla
-        self.gorilla_two = self.create_gorilla(game_state.gorillas[1], game_state.building[0])
+        self.gorilla_two = self.create_gorilla(game_state.gorillas[1], game_state.building[0], self.GORILLA_IMAGE)
         self.render[1].add(self.gorilla_two)
         """Implement the Input UI and Score UI when Adam has them ready
             Here's more space 
@@ -69,14 +72,13 @@ class GameScreenModel(Model):
         self.background.blit(self.wind_arrow.image, self.wind_arrow.rect)
         pygame.display.update()
 
-    def create_gorilla(self, gorilla, building):
+    def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
-        pos = (gorilla.x_pos, gorilla.y_pos)
         size = (building.width * 5) / 8
+        pos = (gorilla.x_pos - size / 2, gorilla.y_pos - size)
         dimensions = (size, size)
-        new_gorilla = Gorilla(dimensions, pos)
+        new_gorilla = Gorilla(dimensions, pos, image)
         return new_gorilla
 
     def update_frame(self, frame):
         """Updates the background to be a new frame of the game"""
-
