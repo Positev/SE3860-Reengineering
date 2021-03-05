@@ -7,5 +7,5 @@ class Color(object):
     BLUE = (0, 0, 255)
     LIGHT_GRAY = (211, 211, 211)
     DARK_GRAY = (169, 169, 169)
-    INVISIBLE = (255, 255, 255, 255)
+    INVISIBLE = (255, 255, 255, 0)
 

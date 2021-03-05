@@ -10,7 +10,7 @@ class TextBox(pygame.sprite.Sprite):
         self.back_ground_color = back_ground_color
         self.text_color = text_color
         self.text = text
-        self.image = pygame.Surface(size)
+        self.image = pygame.Surface(size, flags=pygame.SRCALPHA)
         text_render = self.font.render(self.text, True, text_color)
         self.image.fill(back_ground_color)
         text_render.get_rect().center = (self.image.get_size()[0] // 2, self.image.get_size()[1] // 2)
