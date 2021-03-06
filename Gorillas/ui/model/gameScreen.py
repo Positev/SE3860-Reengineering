@@ -47,7 +47,8 @@ class GameScreenModel(Model):
         # Create the buildings
         self.buildings = []
         for building in self.game_state.building:
-            building_pos = (building.x_pos, building.y_pos - building.height)
+            building_pos = (building.x_pos, building.y_pos-building.height)
+            building_pos = (building.x_pos, building.y_pos)
             building_size = (building.width, building.height)
             new_building = Building(building.color, building_pos, building_size)
             self.render[0].add(new_building)
@@ -226,10 +227,11 @@ class GameScreenModel(Model):
             self.do_key_event(event)
 
     def update(self):
-        self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
+        pre_adapt_state = self.game_controller.next_frame()
+        self.game_state = self.coordinate_adapter.adapt(pre_adapt_state)
         if self.game_state.turn_active:
-            pygame.time.Clock().tick(1)
-            print(self.game_state)
+            pygame.time.Clock().tick(45)
+            #print(self.game_state)
         else:
             pygame.time.Clock().tick(60)
         self.update_frame(self.game_state)

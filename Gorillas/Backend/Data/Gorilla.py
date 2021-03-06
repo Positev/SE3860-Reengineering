@@ -32,7 +32,9 @@ class Gorilla:
         return self._x_pos, self._y_pos
 
     def get_throw_start_pos(self):
-        return self._x_pos, self._y_pos - self._height
+
+       return self._x_pos, self._y_pos + 200
+
 
     def get_size(self):
         return self._width, self._height

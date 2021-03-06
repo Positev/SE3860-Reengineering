@@ -85,11 +85,12 @@ class GameController:
         collisions = CollisionHandler.test_collisions(
             updated_projectiles,
             self._game_state.building,
-            self._game_state.gorillas
+            self._game_state.gorillas, self._screen_size
         )
 
-        for p in updated_projectiles:
-            print(p.get_pos())
+
+        #for p in updated_projectiles:
+        #    print(p.get_pos())
         if len(collisions) > 0:
             for collision in collisions:
                 self._handle_collision(collision, updated_projectiles)
