@@ -12,9 +12,11 @@ class Building:
         self._key = key
         self.height = height
 
+    def graphable(self):
+        return f"0| <| y| <| {self.height}|left|{{{self.x_pos} < x <{self.x_pos + self.width}|right|}}".replace('|','\\')
 
     def __str__(self):
-        return f"Key: {self._key}, X: {self._x_pos}, Y:{self._y_pos}, Color: {self._color}, Width: {self._width}, Height: {self._height}"
+        return f"Key: {self._key}, X: {self._x_pos}, Y:{self._y_pos}, Color: {self._color}, Width: {self._width}, Height: {self._height}, Graphable: {self.graphable()}"
 
     def get_pos(self):
         return self.x_pos, self.y_pos

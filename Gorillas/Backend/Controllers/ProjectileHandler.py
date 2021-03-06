@@ -5,7 +5,6 @@ from Backend.Data.Enumerators import ProjectileTravelDirection
 from Backend.Data.Projectile import Projectile
 
 PATH_STEP_PER_FRAME = 1
-GRAVITY = .001
 
 
 
@@ -14,6 +13,7 @@ GRAVITY = .001
 class ProjectileHandler:
 
     CREATED_PROJECTILES = 0
+    GRAVITY = .001
 
     def __init__(self, wind):
         # TODO implement when all sub-controllers are ready
@@ -35,7 +35,7 @@ class ProjectileHandler:
         vy = projectile.initial_velocity * sine
 
         new_x = projectile_direction * vx * projectile.flight_time + wind_velocity + projectile.start_x
-        new_y = vy * projectile.flight_time - (GRAVITY / 2) * (projectile.flight_time ** 2) + projectile.start_y
+        new_y = vy * projectile.flight_time - (self.GRAVITY / 2) * (projectile.flight_time ** 2) + projectile.start_y
 
         projectile.current_x = new_x
         projectile.current_y = new_y

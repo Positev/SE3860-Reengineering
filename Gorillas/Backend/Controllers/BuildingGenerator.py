@@ -3,7 +3,7 @@ from Backend.Data.Building import Building
 import random
 
 BUILDING_RANGE = (5, 8)
-BUILDING_HEIGHT_SCREEN_PERCENT_RANGE = (40, 80)
+BUILDING_HEIGHT_SCREEN_PERCENT_RANGE = (40, 60)
 PERCENT_TO_DECIMAL = 1 / 100
 
 
