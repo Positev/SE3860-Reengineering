@@ -19,7 +19,7 @@ class GameController:
     def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], gravity: float = 1):
         building_generator = BuildingGenerator()
         buildings = building_generator.generate_buildings(screen_size)
-
+        self._screen_size = screen_size
         ProjectileHandler.GRAVITY = gravity
 
         player_1_pos = buildings[1].top_center()
@@ -90,16 +90,15 @@ class GameController:
 
         for p in updated_projectiles:
             print(p.get_pos())
-
         if len(collisions) > 0:
             for collision in collisions:
-                self._handle_collision(collision)
+                self._handle_collision(collision, updated_projectiles)
 
             self._game_state.next_player()
             self._game_state.turn_active = False
-        elif any([projectile_handler.projectile_out_of_screen(proj, screen_size) for proj in updated_projectiles]):
+        elif any([projectile_handler.projectile_out_of_screen(proj, self._screen_size) for proj in updated_projectiles]):
             for proj in updated_projectiles:
-                if projectile_handler.projectile_out_of_screen(proj, screen_size):
+                if projectile_handler.projectile_out_of_screen(proj, self._screen_size):
                     print("Projectile out of screen")
                     updated_projectiles.remove(proj)
             self._game_state.next_player()

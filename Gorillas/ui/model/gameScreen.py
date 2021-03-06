@@ -27,6 +27,8 @@ class GameScreenModel(Model):
         self.render.append(pygame.sprite.Group())  # Main Layer
         self.render.append(pygame.sprite.Group())  # UI Layer
 
+        self.player_pos = {player_1_id: 0, player_2_id: 1}
+
         self.coordinate_adapter = CoordinateAdapter(screen_size)
         self.game_controller = GameController(player_1_id, player_2_id, screen_size)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
@@ -108,12 +110,13 @@ class GameScreenModel(Model):
         self.render[2].add(self.velocity_label)
         self.render[2].add(self.velocity_edit_box)
         self.active_edit_box = self.angle_edit_box
+        self.getting_input = True
 
         # Create the wind arrow
         self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
         self.render[2].add(self.wind_arrow)
         # Create a list to store destruction in
-        self.collision_list = ()
+        self.collision_list = []
         self.collision_num = 0
         # Create a projectile placeholder to use when updating the scene
         # May need to update in later revisions if there are multiple projectiles
@@ -132,13 +135,16 @@ class GameScreenModel(Model):
         pygame.display.update()
 
     def reset_player_ui(self):
-        player = self.game_state._player_turn  # todo change to not use private member
-        self.angle_label.rect.topleft = self.angle_label_positions[player]
-        self.angle_edit_box.rect.topleft = self.angle_edit_box_positions[player]
-        self.velocity_label.rect.topleft = self.velocity_label_positions[player]
-        self.velocity_edit_box.rect.topleft = self.velocity_edit_box_positions[player]
+        index = self.player_pos[self.game_state.active_player().player_id]  # todo change to not use private member
+        self.angle_label.rect.topleft = self.angle_label_positions[index]
+        self.angle_edit_box.rect.topleft = self.angle_edit_box_positions[index]
+        self.velocity_label.rect.topleft = self.velocity_label_positions[index]
+        self.velocity_edit_box.rect.topleft = self.velocity_edit_box_positions[index]
         self.angle_edit_box.text = ""
-        self.velocity_edit_box = ""
+        self.velocity_edit_box.text = ""
+        self.angle_edit_box.update()
+        self.velocity_edit_box.update()
+        self.getting_input = True
 
     def get_player_throw(self):
         try:
@@ -157,34 +163,36 @@ class GameScreenModel(Model):
     def update_frame(self, frame):
         """Updates the background to be a new frame of the game"""
         # Update the gorillas
-        if frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.ARM_DOWN:
+        if frame.gorillas[0].arm_state == frame.gorillas[0].arm_state.ARM_DOWN:
             self.gorilla_one.image = self.GORILLA_IMAGE
-        elif frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.LEFT_ARM_UP:
+        elif frame.gorillas[0].arm_state == frame.gorillas[0].arm_state.LEFT_ARM_UP:
             self.gorilla_one.image = self.GORILLA_LEFT
-        elif frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.RIGHT_ARM_UP:
+        elif frame.gorillas[0].arm_state == frame.gorillas[0].arm_state.RIGHT_ARM_UP:
             self.gorilla_one.image = self.GORILLA_RIGHT
 
-        if frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.ARM_DOWN:
+        if frame.gorillas[1].arm_state == frame.gorillas[1].arm_state.ARM_DOWN:
             self.gorilla_two.image = self.GORILLA_IMAGE
-        elif frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.LEFT_ARM_UP:
+        elif frame.gorillas[1].arm_state == frame.gorillas[1].arm_state.LEFT_ARM_UP:
             self.gorilla_two.image = self.GORILLA_LEFT
-        elif frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.RIGHT_ARM_UP:
+        elif frame.gorillas[1].arm_state == frame.gorillas[1].arm_state.RIGHT_ARM_UP:
             self.gorilla_two.image = self.GORILLA_RIGHT
 
         # Update the projectile
-        if frame.turn_active():
+        if frame.turn_active:
             projectile_pos = (frame.active_projectiles[0].current_x, frame.active_projectiles[0].current_y)
             self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0],
                                                self.projectile.size[1])
             self.projectile.visible()
+        elif not self.getting_input:
+            self.reset_player_ui()
 
         # Create collisions if a new collision has appeared
         if self.collision_num < len(frame.destruction):
             new_collision = Collisions(frame.destruction[self.collision_num])
-            self.collision_list.add(new_collision)
+            self.collision_list.append(new_collision)
             self.render[1].add(new_collision)
             self.background.blit(self.collision_list[self.collision_num].image,
-                                 self.sollision_list[self.collision_num].rect)
+                                 self.collision_list[self.collision_num].rect)
             self.collision_num = self.collision_num + 1
 
         # Update the wind
@@ -206,7 +214,7 @@ class GameScreenModel(Model):
                 velocity = throw[1]
                 self.game_controller.throw_projectile(angle, velocity)
                 self.active_edit_box = self.angle_edit_box
-                self.reset_player_ui()
+                self.getting_input = False
             else:
                 self.active_edit_box = self.velocity_edit_box
         else:
@@ -219,3 +227,9 @@ class GameScreenModel(Model):
 
     def update(self):
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
+        if self.game_state.turn_active:
+            pygame.time.Clock().tick(1)
+            print(self.game_state)
+        else:
+            pygame.time.Clock().tick(60)
+        self.update_frame(self.game_state)
