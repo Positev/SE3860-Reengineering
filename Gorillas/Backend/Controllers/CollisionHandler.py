@@ -2,7 +2,7 @@ import pygame
 from Backend.Data.Enumerators import CollisionResult
 from Backend.Data.Collision import Collision
 
-from Gorillas.Backend.Adapters.CoordinateAdapter import CoordinateAdapter
+from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
 
 
 class CollisionHandler:

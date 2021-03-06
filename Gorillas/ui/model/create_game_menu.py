@@ -1,12 +1,12 @@
 import pygame
 
-from Gorillas.ui.model.elements.button import Button
-from Gorillas.ui.model.elements.edit_box import EditBox
-from Gorillas.ui.model.elements.text_box import TextBox
-from Gorillas.ui.model.model import Model
-from Gorillas.ui.model.gameScreen import GameScreenModel
-from Gorillas.color import Color
-import Gorillas.utils
+from ui.model.elements.button import Button
+from ui.model.elements.edit_box import EditBox
+from ui.model.elements.text_box import TextBox
+from ui.model.model import Model
+from ui.model.gameScreen import GameScreenModel
+from color import Color
+import utils
 
 
 class CreateGameMenu(Model):
@@ -102,13 +102,13 @@ class CreateGameMenu(Model):
         if player_one_name == player_two_name:
             self.error_label.text = "NAMES CANNOT BE EQUAL!"
             valid_input = False
-        elif not Gorillas.utils.isfloat(self.gravity_edit_box.text):
+        elif not utils.isfloat(self.gravity_edit_box.text):
             self.error_label.text = "GRAVITY MUST BE FLOAT!"
             valid_input = False
         elif float(self.gravity_edit_box.text) <= 0:
             self.error_label.text = "GRAVITY MUST BE GREATER THAN 0"
             valid_input = False
-        elif not Gorillas.utils.isint(self.score_edit_box.text):
+        elif not utils.isint(self.score_edit_box.text):
             self.error_label.text = "SCORE MUST BE INT!"
             valid_input = False
         elif float(self.score_edit_box.text) <= 0:

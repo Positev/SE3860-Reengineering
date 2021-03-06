@@ -76,7 +76,8 @@ class GameController:
                 self._game_state.score.record_win(projectileForCollision.sender_id)
                 print(f"\t{player.player_id} has been hit!")
 
-        projectiles.remove(projectileForCollision)
+        if projectileForCollision in projectiles:
+            projectiles.remove(projectileForCollision)
 
     def next_frame(self):
 

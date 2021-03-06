@@ -1,17 +1,17 @@
 import pygame
-from Gorillas.ui.model.elements.sprites.windArrow import WindArrow
-from Gorillas.ui.model.elements.sprites.banana import Banana
-from Gorillas.ui.model.elements.sprites.collisions import Collisions
-from Gorillas.ui.model.model import Model
-from Gorillas.color import Color
-from Gorillas.ui.model.elements.sprites.sun import Sun
-from Gorillas.ui.model.elements.sprites.gorilla import Gorilla
-from Gorillas.Backend.Controllers.GameController import GameController
-from Gorillas.ui.model.elements.text_box import TextBox
-from Gorillas.ui.model.elements.edit_box import EditBox
-from Gorillas.ui.model.elements.sprites.building import Building
-from Gorillas.Backend.Adapters.CoordinateAdapter import CoordinateAdapter
-import Gorillas.utils
+from ui.model.elements.sprites.windArrow import WindArrow
+from ui.model.elements.sprites.banana import Banana
+from ui.model.elements.sprites.collisions import Collisions
+from ui.model.model import Model
+from color import Color
+from ui.model.elements.sprites.sun import Sun
+from ui.model.elements.sprites.gorilla import Gorilla
+from Backend.Controllers.GameController import GameController
+from ui.model.elements.text_box import TextBox
+from ui.model.elements.edit_box import EditBox
+from ui.model.elements.sprites.building import Building
+from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
+import utils
 
 
 class GameScreenModel(Model):
@@ -214,14 +214,14 @@ class GameScreenModel(Model):
     def do_key_event(self, event):
         """If the key press is enter go to the next text box otherwise send the event to the textbox"""
         if event.key == pygame.K_RETURN:
-            if self.active_edit_box == self.velocity_edit_box and Gorillas.utils.isint(self.velocity_edit_box.text):
+            if self.active_edit_box == self.velocity_edit_box and utils.isint(self.velocity_edit_box.text):
                 throw = self.get_player_throw()
                 angle = throw[0]
                 velocity = throw[1]
                 self.game_controller.throw_projectile(angle, velocity)
                 self.active_edit_box = self.angle_edit_box
                 self.getting_input = False
-            elif Gorillas.utils.isint(self.angle_edit_box.text):
+            elif utils.isint(self.angle_edit_box.text):
                 self.active_edit_box = self.velocity_edit_box
         else:
             self.active_edit_box.handle_event(event)
