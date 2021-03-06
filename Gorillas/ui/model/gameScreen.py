@@ -22,7 +22,7 @@ class GameScreenModel(Model):
     GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
     GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
 
-    def __init__(self, screen_size, player_1_id, player_2_id):
+    def __init__(self, screen_size, player_1_id, player_2_id, gravity, max_score, player_one_score=0, player_two_score=0):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer
         self.render.append(pygame.sprite.Group())  # Main Layer
@@ -31,8 +31,12 @@ class GameScreenModel(Model):
         self.player_pos = {player_1_id: 0, player_2_id: 1}
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
-        self.game_controller = GameController(player_1_id, player_2_id, screen_size)
+        self.game_controller = GameController(player_1_id, player_2_id, screen_size, gravity=gravity)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
+
+        self.player_one_score = player_one_score
+        self.player_two_score =player_two_score
+        self.max_score = max_score
 
         # Create the background
         self.background = pygame.Surface(screen_size)
@@ -70,9 +74,9 @@ class GameScreenModel(Model):
 
         scoreSize = pygame.font.Font.size(ui_font, "Score: 000")
         player1_score_pos = (0, 0)
-        self.player1ScoreBox = TextBox(ui_font, scoreSize, player1_score_pos, text="Score: 0")
+        self.player1ScoreBox = TextBox(ui_font, scoreSize, player1_score_pos, text="Score: " + str(player_one_score))
         player2_score_pos = (screen_size[0] - scoreSize[0], 0)
-        self.player2ScoreBox = TextBox(ui_font, scoreSize, player2_score_pos, text="Score: 0")
+        self.player2ScoreBox = TextBox(ui_font, scoreSize, player2_score_pos, text="Score: " + str(player_two_score))
 
         self.render[2].add(self.player1ScoreBox)
         self.render[2].add(self.player2ScoreBox)

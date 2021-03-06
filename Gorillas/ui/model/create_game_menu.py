@@ -122,7 +122,7 @@ class CreateGameMenu(Model):
 
         gravity = float(self.gravity_edit_box.text)
         score = int(self.score_edit_box.text)
-        return GameScreenModel(self.screen_size, player_one_name, player_two_name)
+        return GameScreenModel(self.screen_size, player_one_name, player_two_name, gravity, score)
 
 
     def get_next_edit_box(self):
