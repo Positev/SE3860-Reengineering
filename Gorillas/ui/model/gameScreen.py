@@ -199,6 +199,7 @@ class GameScreenModel(Model):
             self.background.blit(self.collision_list[self.collision_num].image,
                                  self.collision_list[self.collision_num].rect)
             self.collision_num = self.collision_num + 1
+            self.projectile.transparent()
 
         # Update the wind
         new_width = frame.wind.velocity * self.wind_arrow.WIND_DEFAULT_WIDTH

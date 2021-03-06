@@ -10,4 +10,3 @@ class Building(pygame.sprite.Sprite):
         self.rect = (pos[0], pos[1], size[0], size[1])
         self.image.fill(color)
 
-        pygame.draw.rect(self.image, color, self.rect)
