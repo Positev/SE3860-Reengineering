@@ -16,9 +16,10 @@ class CollisionHandler:
             coordinate_adapter = CoordinateAdapter(screen_size)
             adapted_projectiles = coordinate_adapter.adapt_projectiles(projectiles)
             adapted_buildings = coordinate_adapter.adapt_buildings(buildings)
+            adapted_gorillas = coordinate_adapter.adapt_gorillas(players)
             collisions = []
             for projectile in adapted_projectiles:
-                for player in players:
+                for player in adapted_gorillas:
                     if pygame.sprite.collide_rect(projectile, player):
                         if player.player_id != projectile.sender_id:
                             collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(1), projectile.key(), player.player_id))

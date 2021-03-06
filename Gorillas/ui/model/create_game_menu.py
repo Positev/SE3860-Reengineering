@@ -93,10 +93,15 @@ class CreateGameMenu(Model):
         """Returns the game menu from the name, gravity, and score text fields
         Throws TypeError if gravity is not a float or if score is not an int"""
         try:
-            player_one_name = self.player_one_edit_box.text
-            player_two_name = self.player_two_edit_box.text
-            gravity = float(self.gravity_edit_box.text)
-            score = int(self.score_edit_box.text)
+            #player_one_name = self.player_one_edit_box.text
+            #player_two_name = self.player_two_edit_box.text
+            #gravity = float(self.gravity_edit_box.text)
+            #score = int(self.score_edit_box.text)
+
+            player_one_name = "p1"
+            player_two_name = "p2"
+            gravity = float(9)
+            score = int(3)
         except TypeError:
             pass  # todo Create an error Label to show the user the problem
 
@@ -129,7 +134,7 @@ class CreateGameMenu(Model):
 
     def do_key_event(self, event):
         """If the key press is enter go to the next text box otherwise send the event to the textbox"""
-        if event.key == pygame.K_RETURN:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_TAB:
             self.set_edit_box(self.get_next_edit_box())
         else:
             self.active_editBox.handle_event(event)

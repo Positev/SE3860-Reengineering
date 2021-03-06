@@ -48,8 +48,8 @@ class GameScreenModel(Model):
         self.buildings = []
         for building in self.game_state.building:
             building_pos = (building.x_pos, building.y_pos-building.height)
-            building_pos = (building.x_pos, building.y_pos)
-            building_size = (building.width, building.height)
+            building_pos = (building.x_pos, building.y_pos - 14)
+            building_size = (building.width, building.height * 1.5)
             new_building = Building(building.color, building_pos, building_size)
             self.render[0].add(new_building)
             self.buildings.append(new_building)
@@ -155,9 +155,9 @@ class GameScreenModel(Model):
 
     def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
-        size = (building.width * 5) / 8
-        pos = (gorilla.x_pos - size / 2, gorilla.y_pos - size)
-        dimensions = (size, size)
+
+        pos = (gorilla.x_pos, gorilla.y_pos )
+        dimensions = (gorilla.width, gorilla.height)
         new_gorilla = Gorilla(dimensions, pos, image)
         return new_gorilla
 

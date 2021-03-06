@@ -28,6 +28,7 @@ class Building:
     def top_center(self) -> Tuple[float,float]:
         x = self.x_pos + self.width / 2
         y = self.height
+        print(f"top center: {x},{y}")
         return x, y
 
     def copy(self):
