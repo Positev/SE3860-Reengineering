@@ -4,7 +4,7 @@ import math
 from Backend.Data.Enumerators import ProjectileTravelDirection
 from Backend.Data.Projectile import Projectile
 
-PATH_STEP_PER_FRAME = 1
+PATH_STEP_PER_FRAME = 0.1
 
 
 

@@ -164,7 +164,7 @@ class Projectile:
     
     def increment_flight_time(self):
         #TODO Probably can tune this value.
-        self._flight_time += 2
+        self._flight_time += .2
 
     @property
     def sprite(self) -> int:
