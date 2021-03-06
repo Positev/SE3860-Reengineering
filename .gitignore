@@ -339,3 +339,7 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /Gorillas/Sprites/Doug/dougAnimated.gif
+Gorillas/PyAudioControllerEnv
+Gorillas/.idea/Gorillas.iml
+Gorillas/.idea/Gorillas.iml
+Gorillas/.idea/misc.xml

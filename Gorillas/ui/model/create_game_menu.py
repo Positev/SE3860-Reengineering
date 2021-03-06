@@ -150,7 +150,7 @@ class CreateGameMenu(Model):
 
     def do_key_event(self, event):
         """If the key press is enter go to the next text box otherwise send the event to the textbox"""
-        if event.key == pygame.K_RETURN:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_TAB:
             self.set_edit_box(self.get_next_edit_box())
         else:
             self.active_editBox.handle_event(event)

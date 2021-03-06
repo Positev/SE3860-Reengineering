@@ -52,8 +52,9 @@ class GameScreenModel(Model):
         # Create the buildings
         self.buildings = []
         for building in self.game_state.building:
-            building_pos = (building.x_pos, building.y_pos - building.height)
-            building_size = (building.width, building.height)
+            building_pos = (building.x_pos, building.y_pos-building.height)
+            building_pos = (building.x_pos, building.y_pos - 14)
+            building_size = (building.width, building.height * 1.5)
             new_building = Building(building.color, building_pos, building_size)
             self.render[0].add(new_building)
             self.buildings.append(new_building)
@@ -158,9 +159,9 @@ class GameScreenModel(Model):
 
     def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
-        size = (building.width * 5) / 8
-        pos = (gorilla.x_pos - size / 2, gorilla.y_pos - size)
-        dimensions = (size, size)
+
+        pos = (gorilla.x_pos, gorilla.y_pos )
+        dimensions = (gorilla.width, gorilla.height)
         new_gorilla = Gorilla(dimensions, pos, image)
         return new_gorilla
 
@@ -231,10 +232,11 @@ class GameScreenModel(Model):
 
     def update(self):
         """Get the next frame from game state and update render"""
-        self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
+        pre_adapt_state = self.game_controller.next_frame()
+        self.game_state = self.coordinate_adapter.adapt(pre_adapt_state)
         if self.game_state.turn_active:
-            pygame.time.Clock().tick(1)
-            print(self.game_state)
+            pygame.time.Clock().tick(45)
+            #print(self.game_state)
         else:
             pygame.time.Clock().tick(60)
         self.update_frame(self.game_state)
