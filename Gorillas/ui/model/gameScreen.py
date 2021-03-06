@@ -1,5 +1,6 @@
 import pygame
 
+from Backend.Data.WorldDestruction import WorldDestruction
 from ui.model.elements.sprites.banana import Banana
 from ui.model.elements.sprites.collisions import Collisions
 from ui.model.elements.sprites.windArrow import WindArrow
@@ -78,31 +79,34 @@ class GameScreenModel(Model):
         """Space to add other UI elements in later when Adam is ready"""
         self.background.blit(self.wind_arrow.image, self.wind_arrow.rect)
         self.background.blit(self.projectile.image, self.projectile.rect)
+        destruction = WorldDestruction(600, 600, 50, 20, 30, 10)
+        self.destroyed = Collisions(destruction)
+        self.render[1].add(self.destroyed)
+        self.background.blit(self.destroyed.image, self.destroyed.rect)
         pygame.display.update()
 
     def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
-        size = (building.width * 5) / 8
-        pos = (gorilla.x_pos - size / 2, gorilla.y_pos - size)
-        dimensions = (size, size)
-        new_gorilla = Gorilla(dimensions, pos, image)
+        size = gorilla.get_size()
+        pos = (gorilla.x_pos - size[0] / 2, gorilla.y_pos - size[1])
+        new_gorilla = Gorilla(size, pos, image)
         return new_gorilla
 
     def update_frame(self, frame):
         """Updates the background to be a new frame of the game"""
         # Update the gorillas
-        if frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.ARM_DOWN:
+        if frame.gorillas[0].arm_state == frame.gorillas[0].arm_state.ARM_DOWN:
             self.gorilla_one.image = self.GORILLA_IMAGE
-        elif frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.LEFT_ARM_UP:
+        elif frame.gorillas[0].arm_state == frame.gorillas[0].arm_state.LEFT_ARM_UP:
             self.gorilla_one.image = self.GORILLA_LEFT
-        elif frame.gorillas[0].arm_state == frame.gorillas[0].ArmState.RIGHT_ARM_UP:
+        elif frame.gorillas[0].arm_state == frame.gorillas[0].arm_state.RIGHT_ARM_UP:
             self.gorilla_one.image = self.GORILLA_RIGHT
 
-        if frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.ARM_DOWN:
+        if frame.gorillas[1].arm_state == frame.gorillas[1].arm_state.ARM_DOWN:
             self.gorilla_two.image = self.GORILLA_IMAGE
-        elif frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.LEFT_ARM_UP:
+        elif frame.gorillas[1].arm_state == frame.gorillas[1].arm_state.LEFT_ARM_UP:
             self.gorilla_two.image = self.GORILLA_LEFT
-        elif frame.gorillas[1].arm_state == frame.gorillas[1].ArmState.RIGHT_ARM_UP:
+        elif frame.gorillas[1].arm_state == frame.gorillas[1].arm_state.RIGHT_ARM_UP:
             self.gorilla_two.image = self.GORILLA_RIGHT
 
         # Update the projectile
@@ -118,6 +122,7 @@ class GameScreenModel(Model):
             self.render[1].add(new_collision)
             self.background.blit(self.collision_list[self.collision_num].image, self.sollision_list[self.collision_num].rect)
             self.collision_num = self.collision_num + 1
+            self.projectile.transparent()
 
         # Update the wind
         new_width = frame.wind.velocity * self.wind_arrow.WIND_DEFAULT_WIDTH
