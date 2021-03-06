@@ -11,6 +11,7 @@ from Gorillas.ui.model.elements.text_box import TextBox
 from Gorillas.ui.model.elements.edit_box import EditBox
 from Gorillas.ui.model.elements.sprites.building import Building
 from Gorillas.Backend.Adapters.CoordinateAdapter import CoordinateAdapter
+import Gorillas.utils
 
 
 class GameScreenModel(Model):
@@ -147,10 +148,8 @@ class GameScreenModel(Model):
         self.getting_input = True
 
     def get_player_throw(self):
-        try:
-            return int(self.angle_edit_box.text), int(self.velocity_edit_box.text)
-        except ValueError:
-            return 0, 0  # Todo Change to error message
+        return int(self.angle_edit_box.text), int(self.velocity_edit_box.text)
+
 
     def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
@@ -208,21 +207,21 @@ class GameScreenModel(Model):
     def do_key_event(self, event):
         """If the key press is enter go to the next text box otherwise send the event to the textbox"""
         if event.key == pygame.K_RETURN:
-            if self.active_edit_box == self.velocity_edit_box:
+            if self.active_edit_box == self.velocity_edit_box and Gorillas.utils.isint(self.velocity_edit_box.text):
                 throw = self.get_player_throw()
                 angle = throw[0]
                 velocity = throw[1]
                 self.game_controller.throw_projectile(angle, velocity)
                 self.active_edit_box = self.angle_edit_box
                 self.getting_input = False
-            else:
+            elif Gorillas.utils.isint(self.angle_edit_box.text):
                 self.active_edit_box = self.velocity_edit_box
         else:
             self.active_edit_box.handle_event(event)
 
     def handle_event(self, event):
         """Handle the pygame event"""
-        if event.type == pygame.KEYDOWN:
+        if self.getting_input and event.type == pygame.KEYDOWN:
             self.do_key_event(event)
 
     def update(self):
