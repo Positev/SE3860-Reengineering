@@ -79,10 +79,6 @@ class GameScreenModel(Model):
         """Space to add other UI elements in later when Adam is ready"""
         self.background.blit(self.wind_arrow.image, self.wind_arrow.rect)
         self.background.blit(self.projectile.image, self.projectile.rect)
-        destruction = WorldDestruction(600, 600, 50, 20, 30, 10)
-        self.destroyed = Collisions(destruction)
-        self.render[1].add(self.destroyed)
-        self.background.blit(self.destroyed.image, self.destroyed.rect)
         pygame.display.update()
 
     def create_gorilla(self, gorilla, building, image):
