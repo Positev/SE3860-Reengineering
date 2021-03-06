@@ -12,4 +12,5 @@ class Model:
         pass
 
     def update(self):
+        """Handle any updates that need to be done on each frame"""
         pass

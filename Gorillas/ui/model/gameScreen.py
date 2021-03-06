@@ -140,6 +140,7 @@ class GameScreenModel(Model):
         pygame.display.update()
 
     def reset_player_ui(self):
+        """Move the edit boxes to the current player's side"""
         index = self.player_pos[self.game_state.active_player().player_id]  # todo change to not use private member
         self.angle_label.rect.topleft = self.angle_label_positions[index]
         self.angle_edit_box.rect.topleft = self.angle_edit_box_positions[index]
@@ -229,6 +230,7 @@ class GameScreenModel(Model):
             self.do_key_event(event)
 
     def update(self):
+        """Get the next frame from game state and update render"""
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
         if self.game_state.turn_active:
             pygame.time.Clock().tick(1)
