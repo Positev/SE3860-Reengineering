@@ -1,6 +1,6 @@
 import unittest
-from Data.Wind import Wind
-from Data.Enumerators import WindDirection
+from Backend.Data.Wind import Wind
+from Backend.Data.Enumerators import WindDirection
 
 
 class TestWind(unittest.TestCase):
@@ -20,3 +20,4 @@ class TestWind(unittest.TestCase):
 
         self.assertRaises(Exception, lambda:Wind(RIGHT, -1))   
         self.assertRaises(Exception, lambda:Wind(WindDirection.RIGHT, -1))   
+
