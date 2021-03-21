@@ -2,7 +2,7 @@ from typing import Tuple, List
 from Backend.Data.Building import Building
 import random
 
-from Gorillas.Backend.Physics.PymunkBuilding import PymunkBuilding
+from Backend.Physics.PymunkBuilding import PymunkBuilding
 
 BUILDING_RANGE = (5, 8)
 #todo return to 40 and 60
