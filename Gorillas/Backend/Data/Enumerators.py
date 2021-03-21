@@ -31,3 +31,4 @@ class CollisionResult(Enum):
     NO_HIT = 0
     PLAYER_HIT = 1
     BUILDING_HIT= 2
+    OUT_OF_BOUNDS = 3

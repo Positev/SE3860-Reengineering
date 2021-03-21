@@ -7,9 +7,11 @@ from pymunk import Vec2d
 # Physics handler will take respobsibility of creating and moving projecitles
 # To progress animation, call next_time_step then get the active projectiles
 from Backend.Controllers.GameController import GameController
-from Backend.Data.Enumerators import ProjectileTravelDirection
+from Backend.Data.Collision import Collision
+from Backend.Data.Enumerators import ProjectileTravelDirection, CollisionResult
 from Backend.Physics.PymunkBuilding import PymunkBuilding
 from Backend.Physics.PymunkDestruction import PymunkDestruction
+from Backend.Physics.PymunkGorilla import PymunkGorilla
 from Backend.Physics.PymunkProjectile import PymunkProjectile
 
 
@@ -17,33 +19,34 @@ class PhysicsHandler:
 
     CREATED_PROJECTILES = 0
 
-    def __init__(self, buildings, gorillas):
+    def __init__(self, buildings, gorillas, on_collision_callback, gravity, screen_size):
         self.buildings = buildings
         self.gorillas = gorillas
-
+        self.screen_size = screen_size
         self.active_projectiles = []
         self.space = pymunk.Space()
-        self.space.gravity = Vec2d(0.0, -90.0)
+        self.space.gravity = Vec2d(0.0, -gravity)
         self.destruction = []
-
+        self.collision_callback = on_collision_callback
         for gorilla in self.gorillas:
             gorilla.add_to_space(self.space)
 
         for building in self.buildings:
             building.add_to_space(self.space)
         self.handler = self.space.add_collision_handler(PymunkProjectile.COLLISION_TYPE, PymunkBuilding.COLLISION_TYPE)
-        self.handler.post_solve = self.remove_first
+        self.handler.post_solve = self.handle_building_hit
 
-    def remove_first(self, arbiter, space, data):
+        self.handler = self.space.add_collision_handler(PymunkProjectile.COLLISION_TYPE, PymunkGorilla.COLLISION_TYPE)
+        self.handler.post_solve = self.handle_gorilla_hit
+
+    def handle_building_hit(self, arbiter, space, data):
         ball_shape = arbiter.shapes[0]
-        #center = arbiter.contact_point_set.points[0].point_a.x, arbiter.contact_point_set.points[0].point_a.y
-
-
 
         for projectile in self.active_projectiles:
             if projectile.c_id == ball_shape.body._id:
 
                 center = projectile.get_pos()
+
 
                 for destruction in self.destruction:
                     d_center = destruction.get_center()
@@ -54,11 +57,28 @@ class PhysicsHandler:
 
                 self.active_projectiles.remove(projectile)
 
-                dest = PymunkDestruction(*center, 5)
+                velocity = ball_shape.body.velocity
+                inv_mag = 1 / ((velocity[0] ** 2 + velocity[1] ** 2) ** .5)
+                dest_displacement = (2.5 * velocity[0] * inv_mag), 2.5 * velocity[1] * inv_mag
+                dest_center = center[0] + dest_displacement[0], center[1] + dest_displacement[1]
+
+                dest = PymunkDestruction(*dest_center, 5)
                 self.destruction.append(dest)
                 dest.add_to_space(self.space)
-                print(f"Contact{center }")
-                print(projectile)
+                self.collision_callback(Collision(*center, CollisionResult.BUILDING_HIT, projectile.c_id, arbiter.shapes[1].body._id, ))
+
+        space.remove(ball_shape, ball_shape.body)
+        return True
+
+    def handle_gorilla_hit(self, arbiter, space, data):
+        ball_shape = arbiter.shapes[0]
+
+        for projectile in self.active_projectiles:
+            if projectile.c_id == ball_shape.body._id:
+
+                center = projectile.get_pos()
+                self.active_projectiles.remove(projectile)
+                self.collision_callback(Collision(*center, CollisionResult.PLAYER_HIT, projectile.c_id, arbiter.shapes[1].body._id, ))
 
         space.remove(ball_shape, ball_shape.body)
         return True
@@ -69,6 +89,9 @@ class PhysicsHandler:
     def throw_projectile(self, velocity: float, angle: float,  start_pos: Tuple[float, float], sprite: int,
                          sender_id: str, travel_direction: ProjectileTravelDirection):
 
+        if travel_direction == ProjectileTravelDirection.RIGHT:
+            angle = 180 - angle
+
         new_projectile = PymunkProjectile(velocity, angle, start_pos[0], start_pos[1], sender_id, sprite,travel_direction, key=self.CREATED_PROJECTILES)
         self.CREATED_PROJECTILES += 1
         self.active_projectiles.append(new_projectile)
@@ -77,21 +100,28 @@ class PhysicsHandler:
 
 
     # compute next step in physics
-    def next_time_step(self, dt = 1/600):
+    def next_time_step(self, dt = 1/60):
         self.space.step(dt)
+        for projectile in self.active_projectiles:
+            cur_x, cur_y = projectile.get_pos()
+            w, h = self.screen_size
+            if cur_x < 0 or cur_x > w:
+                self.active_projectiles.remove(projectile)
+                self.collision_callback(Collision(*projectile.get_pos(), CollisionResult.OUT_OF_BOUNDS, projectile.c_id))
+
 
 
 if __name__ == '__main__':
-    gc = GameController("1","2", (400,4250))
+    screen_size = (400,425)
+    gc = GameController("1","2",screen_size )
     print(gc.game_state)
-    ph = PhysicsHandler(gc.game_state.building,gc.game_state.gorillas)
-    ph.throw_projectile(30, 30, (30, 400), 0, "str", ProjectileTravelDirection.LEFT)
+    ph = PhysicsHandler(gc.game_state.building,gc.game_state.gorillas, lambda x: print(x),90,screen_size)
 
     while True:
         ph.next_time_step()
         time.sleep(.005)
         if len(ph.active_projectiles) == 0:
-            ph.throw_projectile(30, 30, (30, 400), 0, "str", ProjectileTravelDirection.LEFT)
+            ph.throw_projectile(float(input("Velocity")), float(input("Angle")), (30, 400), 0, "str", ProjectileTravelDirection.LEFT)
         #print(ph.active_projectiles[0].get_pos())
 
 
