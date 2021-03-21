@@ -11,6 +11,7 @@ from Backend.Data.Gorilla import Gorilla
 from Backend.Data.ScoreKeeper import ScoreKeeper
 from Backend.Data.Wind import Wind
 from Backend.Data.WorldDestruction import WorldDestruction
+from Backend.Physics.PymunkGorilla import PymunkGorilla
 
 
 class GameController:
@@ -23,10 +24,10 @@ class GameController:
         ProjectileHandler.GRAVITY = gravity
 
         player_1_pos = buildings[1].top_center()
-        player_1 = Gorilla(player_1_pos[0], player_1_pos[1], player_1_id, GorillaLocation.LEFT)
+        player_1 = PymunkGorilla(player_1_pos[0], player_1_pos[1], player_1_id, GorillaLocation.LEFT)
 
         player_2_pos = buildings[-2].top_center()
-        player_2 = Gorilla(player_2_pos[0], player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
+        player_2 = PymunkGorilla(player_2_pos[0], player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
 
         score_keeper = ScoreKeeper(player_1_id, player_2_id)
         wind = Wind(velocity=1)
