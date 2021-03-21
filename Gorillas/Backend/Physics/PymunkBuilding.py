@@ -1,0 +1,31 @@
+# An extension of the Building class to provide extra data for pymunk
+from typing import Tuple
+
+import pymunk
+
+from Gorillas.Backend.Data.Building import Building
+
+
+class PymunkBuilding(Building):
+    COLLISION_TYPE = 'building'
+    MASS = 100
+
+    def __init__(self, x_pos: float, y_pos: float, color: Tuple[int, int, int], width: float, height: float,
+                 key: int = 0):
+        half_w = width / 2
+        half_h = height
+        center = x_pos, y_pos + half_h
+
+        vs = [(half_w, half_h), (-half_w, half_h), (half_w, -half_h), (-half_w, -half_h)]
+
+        moment = pymunk.moment_for_poly(self.MASS, vs)
+
+        self.body = pymunk.Body(self.MASS, moment)
+        self.shape = pymunk.Poly(self.body, vs)
+        self.body.position = center
+        self.shape.collision_type = self.COLLISION_TYPE
+
+        Building.__init__(self, x_pos, y_pos, color, width, key, height)
+
+    def add_to_space(self, space):
+        space.add(self.body, self.shape)
