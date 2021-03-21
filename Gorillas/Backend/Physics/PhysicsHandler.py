@@ -9,6 +9,7 @@ from pymunk import Vec2d
 from Backend.Controllers.GameController import GameController
 from Backend.Data.Enumerators import ProjectileTravelDirection
 from Backend.Physics.PymunkBuilding import PymunkBuilding
+from Backend.Physics.PymunkDestruction import PymunkDestruction
 from Backend.Physics.PymunkProjectile import PymunkProjectile
 
 
@@ -23,6 +24,7 @@ class PhysicsHandler:
         self.active_projectiles = []
         self.space = pymunk.Space()
         self.space.gravity = Vec2d(0.0, -90.0)
+        self.destruction = []
 
         for gorilla in self.gorillas:
             gorilla.add_to_space(self.space)
@@ -30,28 +32,33 @@ class PhysicsHandler:
         for building in self.buildings:
             building.add_to_space(self.space)
         self.handler = self.space.add_collision_handler(PymunkProjectile.COLLISION_TYPE, PymunkBuilding.COLLISION_TYPE)
-        self.handler.begin = self.remove_first
+        self.handler.post_solve = self.remove_first
 
     def remove_first(self, arbiter, space, data):
         ball_shape = arbiter.shapes[0]
+        #center = arbiter.contact_point_set.points[0].point_a.x, arbiter.contact_point_set.points[0].point_a.y
 
-        collided_projectiles = []
-        collided_buildings = []
-        collided_world_destructions = []
-        collided_gorillas = []
 
-        for shape in arbiter.shapes:
-            for gorilla in self.gorillas:
-                pass
-            for building in self.buildings:
-                pass
-            for projectile in self.active_projectiles:
-                pass
-            for destruction in self.world_destruction:
-                pass
 
-        for shape in arbiter.shapes:
+        for projectile in self.active_projectiles:
+            if projectile.c_id == ball_shape.body._id:
 
+                center = projectile.get_pos()
+
+                for destruction in self.destruction:
+                    d_center = destruction.get_center()
+                    diff = center[0] - d_center[0], center[1] - d_center[1]
+                    r_diff = diff[0] ** 2 + diff[1] ** 2
+                    if r_diff < destruction.radius() ** 2:
+                        return False
+
+                self.active_projectiles.remove(projectile)
+
+                dest = PymunkDestruction(*center, 5)
+                self.destruction.append(dest)
+                dest.add_to_space(self.space)
+                print(f"Contact{center }")
+                print(projectile)
 
         space.remove(ball_shape, ball_shape.body)
         return True
@@ -70,19 +77,22 @@ class PhysicsHandler:
 
 
     # compute next step in physics
-    def next_time_step(self, dt = 1/60):
+    def next_time_step(self, dt = 1/600):
         self.space.step(dt)
 
 
 if __name__ == '__main__':
-    gc = GameController("1","2", (400,400))
+    gc = GameController("1","2", (400,4250))
     print(gc.game_state)
     ph = PhysicsHandler(gc.game_state.building,gc.game_state.gorillas)
-    ph.throw_projectile(30, 30, (30, 450), 0, "str", ProjectileTravelDirection.LEFT)
+    ph.throw_projectile(30, 30, (30, 400), 0, "str", ProjectileTravelDirection.LEFT)
 
     while True:
         ph.next_time_step()
-        time.sleep(.05)
-        print(ph.active_projectiles[0].get_pos())
+        time.sleep(.005)
+        if len(ph.active_projectiles) == 0:
+            ph.throw_projectile(30, 30, (30, 400), 0, "str", ProjectileTravelDirection.LEFT)
+        #print(ph.active_projectiles[0].get_pos())
+
 
 

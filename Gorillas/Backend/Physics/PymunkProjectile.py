@@ -23,7 +23,7 @@ class PymunkProjectile(Projectile):
                  key: int = 0,
                  width=WIDTH,
                  height=HEIGHT):
-        vs = [(-23, 26), (23, 26), (0, -26)]
+        vs = [(-12, 13), (12, 13), (0, -14)]
         moment = pymunk.moment_for_poly(self.MASS, vs)
         self.body = pymunk.Body(self.MASS, moment)
         self.c_id = self.body._id
@@ -40,6 +40,7 @@ class PymunkProjectile(Projectile):
 
         # https://github.com/viblo/pymunk/blob/master/examples/using_sprites.py
         self.shape = pymunk.Poly(self.body, vs)
+        self.shape.filter = pymunk.ShapeFilter(categories=4, mask=pymunk.ShapeFilter.ALL_MASKS() ^ 2)
         self.body.position = (start_x, start_y)
         self.body.angle = self.rotation
         self.body.velocity = self.initial_velocity * cos(math.radians(launch_angle )), self.initial_velocity * sin(math.radians(launch_angle))

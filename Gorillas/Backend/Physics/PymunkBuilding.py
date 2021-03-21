@@ -20,10 +20,12 @@ class PymunkBuilding(Building):
 
         moment = pymunk.moment_for_poly(self.MASS, vs)
 
+
         self.body = pymunk.Body(self.MASS, moment,  body_type=pymunk.Body.STATIC)
         self.shape = pymunk.Poly(self.body, vs)
         self.body.position = center
         self.shape.collision_type = self.COLLISION_TYPE
+        self.shape.filter = pymunk.ShapeFilter(categories=1)
         self.c_id = self.body._id
         Building.__init__(self, x_pos, y_pos, color, width,height, key, )
 
