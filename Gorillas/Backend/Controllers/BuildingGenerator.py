@@ -2,6 +2,8 @@ from typing import Tuple, List
 from Backend.Data.Building import Building
 import random
 
+from Gorillas.Backend.Physics.PymunkBuilding import PymunkBuilding
+
 BUILDING_RANGE = (5, 8)
 #todo return to 40 and 60
 BUILDING_HEIGHT_SCREEN_PERCENT_RANGE = (40, 50)
@@ -27,7 +29,7 @@ class BuildingGenerator:
                 BUILDING_HEIGHT_SCREEN_PERCENT_RANGE[0],
                 BUILDING_HEIGHT_SCREEN_PERCENT_RANGE[1]) * \
                               PERCENT_TO_DECIMAL * screen_size[1]
-            new_building = Building(
+            new_building = PymunkBuilding(
                 building_index * building_width,
                 0,
                 (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)),

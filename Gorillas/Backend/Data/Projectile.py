@@ -44,7 +44,7 @@ class Projectile:
             f"Start Position: ({self.start_x},{self.start_y})",
             f"Size: ({self._width}, {self._height})",
             f"Rotation: {self._rotation}",
-            f"Current Position: ({self.current_x},{self.current_y})",
+            f"Current Position: {self.get_pos()}",
             f"Sender ID: {self.sender_id}",
             f"Sprite:  {self.sprite}",
 
@@ -177,4 +177,4 @@ class Projectile:
 
     @property
     def rect(self):
-        return pygame.Rect(self._current_x, self._current_y, self._width, self._height)
+        return pygame.Rect(*self.get_pos(), *self.get_size())

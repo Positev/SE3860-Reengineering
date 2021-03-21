@@ -6,7 +6,7 @@ from Gorillas.Backend.Data.Gorilla import Gorilla, HEIGHT, WIDTH
 
 
 class PymunkGorilla(Gorilla):
-    COLLISION_TYPE = 'gorilla'
+    COLLISION_TYPE = 2
     MASS = 10
 
     def __init__(self, x_pos: float, y_pos: float, player_id: str, location: GorillaLocation, width=WIDTH,

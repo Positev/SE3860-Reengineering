@@ -7,7 +7,7 @@ from Gorillas.Backend.Data.Building import Building
 
 
 class PymunkBuilding(Building):
-    COLLISION_TYPE = 'building'
+    COLLISION_TYPE = 1
     MASS = 100
 
     def __init__(self, x_pos: float, y_pos: float, color: Tuple[int, int, int], width: float, height: float,
