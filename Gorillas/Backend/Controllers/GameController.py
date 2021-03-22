@@ -1,3 +1,4 @@
+import winsound
 from typing import Tuple, List
 
 from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
@@ -70,12 +71,13 @@ class GameController:
             if collider.key() == collision.collided_id():
                 self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 30, 0, 0, 15))
                 print(f"\tCollided With -> {collider}")
+                winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
         for player in self._game_state.gorillas:
             if player.player_id == collision.collided_id():
                 self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 45, 0, 0, 15))
                 self._game_state.score.record_win(projectileForCollision.sender_id)
                 print(f"\t{player.player_id} has been hit!")
-
+                winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
         if projectileForCollision in projectiles:
             projectiles.remove(projectileForCollision)
 

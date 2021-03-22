@@ -1,5 +1,5 @@
 import pygame
-
+import winsound
 
 class Presenter:
     """Handel the display of the view and handle user interactions to the model"""
@@ -24,7 +24,7 @@ class Presenter:
     def run(self):
         """Render all the sprites to the view and handle events"""
         self.running = True
-
+        winsound.PlaySound("sounds\\intro.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
         while self.running:
             self.handle_events()
             self.view.get_surface().fill(self.model.background_color)

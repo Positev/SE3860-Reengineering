@@ -9,6 +9,7 @@ from color import Color
 import utils
 
 
+
 class CreateGameMenu(Model):
     """A menu for creating a game of Gorillas"""
 
@@ -27,6 +28,7 @@ class CreateGameMenu(Model):
     def __init__(self, screen_size):
         """Initializes the menu"""
         super(CreateGameMenu, self).__init__(self.BACKGROUND_COLOR)
+
         self.screen_size = screen_size
         self.buttons = list()
         self.edit_boxes = list()

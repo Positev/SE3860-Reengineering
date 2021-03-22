@@ -1,3 +1,5 @@
+import winsound
+
 import pygame
 from ui.model.elements.sprites.windArrow import WindArrow
 from ui.model.elements.sprites.banana import Banana
@@ -219,6 +221,7 @@ class GameScreenModel(Model):
                 angle = throw[0]
                 velocity = throw[1]
                 self.game_controller.throw_projectile(angle, velocity)
+                winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                 self.active_edit_box = self.angle_edit_box
                 self.getting_input = False
             elif utils.isint(self.angle_edit_box.text):
