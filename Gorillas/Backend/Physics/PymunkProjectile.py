@@ -14,7 +14,7 @@ class PymunkProjectile(Projectile):
     MASS = 5
 
     def __init__(self, initial_velocity: float,
-                 launch_angle: float,
+                 angle,
                  start_x: float,
                  start_y: float,
                  sender_id: str,
@@ -28,7 +28,7 @@ class PymunkProjectile(Projectile):
         self.body = pymunk.Body(self.MASS, moment)
         self.c_id = self.body._id
         Projectile.__init__(self, initial_velocity,
-                            launch_angle,
+                            angle,
                             start_x,
                             start_y,
                             sender_id,
@@ -43,7 +43,7 @@ class PymunkProjectile(Projectile):
         self.shape.filter = pymunk.ShapeFilter(categories=4, mask=pymunk.ShapeFilter.ALL_MASKS() ^ 2)
         self.body.position = (start_x, start_y)
         self.body.angle = self.rotation
-        self.body.velocity = self.initial_velocity * cos(math.radians(launch_angle )), self.initial_velocity * sin(math.radians(launch_angle))
+        self.body.velocity = initial_velocity
         self.shape.collision_type = self.COLLISION_TYPE
 
     def get_pos(self):

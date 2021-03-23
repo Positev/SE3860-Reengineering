@@ -1,3 +1,4 @@
+from random import  randint, choice
 from typing import Tuple, List
 
 from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
@@ -5,7 +6,7 @@ from Backend.Controllers.BuildingGenerator import BuildingGenerator
 from Backend.Controllers.CollisionHandler import CollisionHandler
 from Backend.Controllers.GorillaController import GorillaController
 from Backend.Controllers.ProjectileHandler import ProjectileHandler
-from Backend.Data.Enumerators import GorillaLocation, ProjectileTravelDirection, CollisionResult
+from Backend.Data.Enumerators import GorillaLocation, ProjectileTravelDirection, CollisionResult, WindDirection
 from Backend.Data.GameState import GameState
 from Backend.Data.Gorilla import Gorilla
 from Backend.Data.ScoreKeeper import ScoreKeeper
@@ -13,6 +14,7 @@ from Backend.Data.Wind import Wind
 from Backend.Data.WorldDestruction import WorldDestruction
 from Backend.Physics.PymunkGorilla import PymunkGorilla
 
+WIND_RANGE = (1, 35)
 
 class GameController:
 
@@ -30,7 +32,7 @@ class GameController:
         player_2 = PymunkGorilla(player_2_pos[0], player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
 
         score_keeper = ScoreKeeper(player_1_id, player_2_id)
-        wind = Wind(velocity=1)
+        wind = Wind(velocity=randint(10,20), direction=choice([WindDirection.LEFT, WindDirection.RIGHT]))
         turn_active = False
 
         self._game_state = GameState(
@@ -44,7 +46,7 @@ class GameController:
         )
 
         from Backend.Physics.PhysicsHandler import PhysicsHandler
-        self.physics_handler = PhysicsHandler(buildings, [player_1, player_2], self._handle_collision, 90, screen_size)
+        self.physics_handler = PhysicsHandler(buildings, [player_1, player_2], self._handle_collision, 90, wind, screen_size)
 
 
 
