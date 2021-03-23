@@ -110,6 +110,8 @@ class GameScreenModel(Model):
             projectile_pos = (frame.active_projectiles[0].current_x, frame.active_projectiles[0].current_y)
             self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0], self.projectile.size[1])
             self.projectile.visible()
+        else:
+            self.projectile.transparent()
 
         # Create collisions if a new collision has appeared
         if self.collision_num < len(frame.destruction):
