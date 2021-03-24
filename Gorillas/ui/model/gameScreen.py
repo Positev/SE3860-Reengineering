@@ -20,6 +20,8 @@ class GameScreenModel(Model):
     GORILLA_IMAGE = pygame.image.load("Sprites/Doug/doug.png")
     GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
     GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
+    SUN_SMILE = pygame.image.load("Sprites/Sun/sun_doug_2.png")
+    SUN_FROWN = pygame.image.load("Sprites/Sun/sun_doug_1.png")
 
     def __init__(self, screen_size, player_1_id, player_2_id):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
@@ -112,6 +114,12 @@ class GameScreenModel(Model):
             self.projectile.visible()
         else:
             self.projectile.transparent()
+
+        # Update the sun if hit
+        if self.sun.sun_collide(self.projectile.pos):
+            self.sun.image = self.SUN_FROWN
+        else:
+            self.sun.image = self.SUN_SMILE
 
         # Create collisions if a new collision has appeared
         if self.collision_num < len(frame.destruction):
