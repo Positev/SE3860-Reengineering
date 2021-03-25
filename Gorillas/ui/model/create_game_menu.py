@@ -5,7 +5,7 @@ import pygame
 import pygame_gui
 import utils
 from pygame_gui.core.interfaces import IContainerLikeInterface
-import ui.model.gameScreen
+from ui.model.gameScreen import GameScreenPanel
 
 
 class NamePanel(pygame_gui.elements.ui_panel.UIPanel):
@@ -96,7 +96,7 @@ class CreateGameMenu(pygame_gui.elements.ui_panel.UIPanel):
                                                          container=self,
                                                          manager=manager)
         self.start_button.set_relative_position(
-            (self._rect.centerx - self.start_button.relative_rect.centerx, self.start_button.relative_rect.y))
+            (self._rect.width/2 - self.start_button.relative_rect.centerx, self.start_button.relative_rect.y))
 
         self.set_relative_position(tuple(map(operator.sub, parent_rect.center, self._rect.center)))
 
@@ -123,6 +123,11 @@ class CreateGameMenu(pygame_gui.elements.ui_panel.UIPanel):
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.start_button:
                     pygame.event.post(pygame.event.Event(pygame.USEREVENT,
-                                                         {"Change Model": gameScreen(
+                                                         {"Change Model": GameScreenPanel(
+                                                             self.player_one_settings_panel.name_box.get_text(),
+                                                             self.player_two_settings_panel.name_box.get_text(),
+                                                             float(self.settings_panel.gravity_box.get_text()),
+                                                             int(self.settings_panel.score_box.get_text()),
                                                              self._parent_rect, self.ui_manager)}))
                     return True
+        return False
