@@ -1,170 +1,128 @@
+import operator
+from typing import Union
+
 import pygame
-
-from ui.model.elements.button import Button
-from ui.model.elements.edit_box import EditBox
-from ui.model.elements.text_box import TextBox
-from ui.model.model import Model
-from ui.model.gameScreen import GameScreenModel
-from color import Color
+import pygame_gui
 import utils
+from pygame_gui.core.interfaces import IContainerLikeInterface
+import ui.model.gameScreen
 
 
-class CreateGameMenu(Model):
+class NamePanel(pygame_gui.elements.ui_panel.UIPanel):
+    _PANEL_SIZE = (300, 80)
+
+    def __init__(self, player_num: int, panel_pos: (int, int),
+                 manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface,
+                 container: Union[IContainerLikeInterface, None] = None):
+        self._rect = pygame.Rect(panel_pos, self._PANEL_SIZE)
+        super(NamePanel, self).__init__(self._rect, 0, manager, container=container)
+        self._PLAYER_LABEL_RECT = pygame.Rect(110, 10, 80, 20)
+        self._NAME_LABEL_RECT = pygame.Rect(10, 30, 40, 20)
+        self._NAME_BOX_RECT = pygame.Rect(50, 30, 210, 20)
+
+        self.player_label = pygame_gui.elements.UILabel(relative_rect=self._PLAYER_LABEL_RECT,
+                                                        text="Player " + str(player_num) + ": ",
+                                                        manager=manager,
+                                                        container=self)
+
+        self.name_label = pygame_gui.elements.UILabel(relative_rect=self._NAME_LABEL_RECT,
+                                                      text="Name:",
+                                                      manager=manager,
+                                                      container=self)
+
+        self.name_box = pygame_gui.elements.ui_text_entry_line.UITextEntryLine(relative_rect=self._NAME_BOX_RECT,
+                                                                               manager=manager,
+                                                                               container=self)
+
+
+class SettingsPanel(pygame_gui.elements.ui_panel.UIPanel):
+    _PANEL_SIZE = (300, 100)
+
+    def __init__(self, panel_pos: (int, int),
+                 manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface,
+                 container: Union[IContainerLikeInterface, None] = None):
+        self._rect = pygame.Rect(panel_pos, self._PANEL_SIZE)
+        super(SettingsPanel, self).__init__(self._rect, 0, manager, container=container)
+
+        self._GRAVITY_LABEL_RECT = pygame.Rect(5, 10, 80, 20)
+        self._GRAVITY_BOX_RECT = pygame.Rect(85, 10, 210, 20)
+
+        self._SCORE_LABEL_RECT = pygame.Rect(5, 50, 80, 20)
+        self._SCORE_BOX_RECT = pygame.Rect(85, 50, 210, 20)
+
+        self.gravity_label = pygame_gui.elements.UILabel(relative_rect=self._GRAVITY_LABEL_RECT,
+                                                         text="Gravity:",
+                                                         manager=manager,
+                                                         container=self)
+
+        self.gravity_box = pygame_gui.elements.ui_text_entry_line.UITextEntryLine(relative_rect=self._GRAVITY_BOX_RECT,
+                                                                                  manager=manager,
+                                                                                  container=self)
+        self.gravity_box.set_allowed_characters("numbers")
+        self.gravity_box.allowed_characters.append('.')
+
+        self.score_label = pygame_gui.elements.UILabel(relative_rect=self._SCORE_LABEL_RECT,
+                                                       text="Score:",
+                                                       manager=manager,
+                                                       container=self, )
+
+        self.score_box = pygame_gui.elements.ui_text_entry_line.UITextEntryLine(relative_rect=self._SCORE_BOX_RECT,
+                                                                                manager=manager,
+                                                                                container=self)
+        self.score_box.set_allowed_characters("numbers")
+
+
+class CreateGameMenu(pygame_gui.elements.ui_panel.UIPanel):
     """A menu for creating a game of Gorillas"""
 
-    BACKGROUND_COLOR = Color.WHITE
-    BUTTON_HEIGHT = 80
-    LABEL_FONT_SIZE = 24
-    LABEL_WIDTH = 175
-    PLAYER_ONE_LABEL_TEXT = "Player 1:"
-    PLAYER_TWO_LABEL_TEXT = "Player 2:"
-    GRAVITY_LABEL_TEXT = "Gravity:"
-    SCORE_LABEL_TEXT = "Score to Win:"
-    START_GAME_BUTTON_TEXT = "Start Game"
+    PLAYER_ONE_SETTING_POS = (0, 0)
+    PLAYER_TWO_SETTING_POS = (300, 0)
+    SETTING_POS = (0, 100)
 
-    MENU_TEXT_HEIGHT = 120
+    def __init__(self, parent_rect: pygame.Rect,
+                 manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface):
+        self._rect = pygame.rect.Rect(0, 0, 600, 400)
+        self._parent_rect = parent_rect
+        super(CreateGameMenu, self).__init__(self._rect, 0, manager)
+        self._START_BUTTON_RECT = pygame.Rect(0, 225, 240, 60)
+        self.player_one_settings_panel = NamePanel(1, self.PLAYER_ONE_SETTING_POS, manager=manager, container=self)
+        self.player_two_settings_panel = NamePanel(2, self.PLAYER_TWO_SETTING_POS, manager=manager, container=self)
+        self.settings_panel = SettingsPanel(self.SETTING_POS, manager=manager, container=self)
+        self.settings_panel.set_relative_position(
+            (self._rect.centerx - self.settings_panel.relative_rect.centerx, self.settings_panel.relative_rect.y))
 
-    def __init__(self, screen_size):
-        """Initializes the menu"""
-        super(CreateGameMenu, self).__init__(self.BACKGROUND_COLOR)
-        self.screen_size = screen_size
-        self.buttons = list()
-        self.edit_boxes = list()
-        self.render.append(pygame.sprite.Group())
-        self.label_font = pygame.font.Font(pygame.font.get_default_font(), self.LABEL_FONT_SIZE)
-        self.label_size = (self.LABEL_WIDTH, pygame.font.Font.size(self.label_font, self.PLAYER_ONE_LABEL_TEXT)[1])
+        self.start_button = pygame_gui.elements.UIButton(relative_rect=self._START_BUTTON_RECT,
+                                                         text="Start",
+                                                         container=self,
+                                                         manager=manager)
+        self.start_button.set_relative_position(
+            (self._rect.centerx - self.start_button.relative_rect.centerx, self.start_button.relative_rect.y))
 
-        # Player One label with Edit Box
-        player_one_label_pos = (screen_size[0] / 4 - self.LABEL_WIDTH, screen_size[1] / 4)
-        self.player_one_label = TextBox(self.label_font, self.label_size, player_one_label_pos,
-                                        text=self.PLAYER_ONE_LABEL_TEXT)
-        player_one_edit_box_pos = (player_one_label_pos[0] + self.LABEL_WIDTH, player_one_label_pos[1])
-        self.player_one_edit_box = EditBox(self.label_font, self.label_size, player_one_edit_box_pos,
-                                           back_ground_color=Color.DARK_GRAY)
-        self.edit_boxes.append(self.player_one_edit_box)
-        self.render[0].add(self.player_one_label)
-        self.render[0].add(self.player_one_edit_box)
+        self.set_relative_position(tuple(map(operator.sub, parent_rect.center, self._rect.center)))
 
-        # Player Two Label with Edit Box
-        player_two_label_pos = (screen_size[0] - (screen_size[0] / 4) - self.LABEL_WIDTH, screen_size[1] / 4)
-        self.player_two_label = TextBox(self.label_font, self.label_size, player_two_label_pos,
-                                        text=self.PLAYER_TWO_LABEL_TEXT)
-        player_two_edit_box_pos = (player_two_label_pos[0] + self.LABEL_WIDTH, player_two_label_pos[1])
-        self.player_two_edit_box = EditBox(self.label_font, self.label_size, player_two_edit_box_pos,
-                                           back_ground_color=Color.LIGHT_GRAY)
-        self.edit_boxes.append(self.player_two_edit_box)
-        self.render[0].add(self.player_two_label)
-        self.render[0].add(self.player_two_edit_box)
-
-        # Gravity Label with Edit Box
-        gravity_label_pos = (screen_size[0] / 2 - self.LABEL_WIDTH, screen_size[1] / 2)
-        self.gravity_label = TextBox(self.label_font, self.label_size, gravity_label_pos,
-                                     text=self.GRAVITY_LABEL_TEXT)
-        gravity_edit_box_pos = (gravity_label_pos[0] + self.LABEL_WIDTH, gravity_label_pos[1])
-        self.gravity_edit_box = EditBox(self.label_font, self.label_size, gravity_edit_box_pos,
-                                        back_ground_color=Color.LIGHT_GRAY)
-        self.edit_boxes.append(self.gravity_edit_box)
-        self.render[0].add(self.gravity_label)
-        self.render[0].add(self.gravity_edit_box)
-
-        # Score Label with Edit Box
-        score_label_pos = (screen_size[0] / 2 - self.LABEL_WIDTH, screen_size[1] / 2 + self.label_size[1] * 2)
-        self.score_label = TextBox(self.label_font, self.label_size, score_label_pos,
-                                   text=self.SCORE_LABEL_TEXT)
-        score_edit_box_pos = (gravity_label_pos[0] + self.LABEL_WIDTH, score_label_pos[1])
-        self.score_edit_box = EditBox(self.label_font, self.label_size, score_edit_box_pos,
-                                      back_ground_color=Color.LIGHT_GRAY)
-        self.edit_boxes.append(self.score_edit_box)
-        self.render[0].add(self.score_label)
-        self.render[0].add(self.score_edit_box)
-
-        # Start Game Button
-        start_game_button_event = pygame.event.Event(pygame.USEREVENT, {"Create Game": None})
-        start_game_button_size = (screen_size[0] / 2, self.BUTTON_HEIGHT)
-        start_game_button_pos = (
-            screen_size[0] / 2 - start_game_button_size[0] / 2, screen_size[1] - screen_size[1] / 4)
-        self.start_game_button = Button(start_game_button_event, self.START_GAME_BUTTON_TEXT,
-                                        self.label_font, start_game_button_size, start_game_button_pos)
-        self.render[0].add(self.start_game_button)
-        self.buttons.append(self.start_game_button)
-
-        self.active_editBox = self.player_one_edit_box
-        error_label_size = (screen_size[0]/2, self.label_size[1])
-        error_label_pos = (screen_size[0]/2 - error_label_size[0] / 2, screen_size[1] - screen_size[1]/4 - error_label_size[1])
-        self.error_label = TextBox(self.label_font, error_label_size, error_label_pos)
-
-    def create_game(self):
-        """Returns the game menu from the name, gravity, and score text fields
-        Throws TypeError if gravity is not a float or if score is not an int"""
-        valid_input = True
-        player_one_name = self.player_one_edit_box.text
-        player_two_name = self.player_two_edit_box.text
-        if player_one_name == player_two_name:
-            self.error_label.text = "NAMES CANNOT BE EQUAL!"
-            valid_input = False
-        elif not utils.isfloat(self.gravity_edit_box.text):
-            self.error_label.text = "GRAVITY MUST BE FLOAT!"
-            valid_input = False
-        elif float(self.gravity_edit_box.text) <= 0:
-            self.error_label.text = "GRAVITY MUST BE GREATER THAN 0"
-            valid_input = False
-        elif not utils.isint(self.score_edit_box.text):
-            self.error_label.text = "SCORE MUST BE INT!"
-            valid_input = False
-        elif float(self.score_edit_box.text) <= 0:
-            self.error_label.text = "SCORE MUST BE GREATER THAN 0"
-            valid_input = False
-
-        if not valid_input:
-            self.error_label.update()
-            self.render[0].add(self.error_label)
-            return self
-
-        gravity = float(self.gravity_edit_box.text)
-        score = int(self.score_edit_box.text)
-        return GameScreenModel(self.screen_size, player_one_name, player_two_name, gravity, score)
-
-
-    def get_next_edit_box(self):
-        """Sets the active edit box to the next one in the list"""
-        index = (self.edit_boxes.index(self.active_editBox) + 1) % len(self.edit_boxes)
-        return self.edit_boxes.__getitem__(index)
-
-    def set_edit_box(self, new_edit_box):
-        """Sets the active edit box to the given edit box"""
-        self.active_editBox.back_ground_color = Color.LIGHT_GRAY
-        self.active_editBox.update()
-        new_edit_box.back_ground_color = Color.DARK_GRAY
-        new_edit_box.update()
-        self.active_editBox = new_edit_box
-
-    def do_mouse_event(self, event):
-        """Send the event to all the buttons and if the mouse clicks on a text field, set it to the active text box"""
-        for button in self.buttons:
-            button.handle_event(event)
-        if event.type == pygame.MOUSEBUTTONUP:
-            for edit_box in self.edit_boxes:
-                if edit_box.rect.collidepoint(event.pos):
-                    self.set_edit_box(edit_box)
-                    break
-
-    def do_key_event(self, event):
-        """If the key press is enter go to the next text box otherwise send the event to the textbox"""
-        if event.key == pygame.K_RETURN or event.key == pygame.K_TAB:
-            self.set_edit_box(self.get_next_edit_box())
+    def update(self, time_delta: float):
+        super().update(time_delta)
+        if self.player_one_settings_panel.name_box.get_text() == self.player_two_settings_panel.name_box.get_text() \
+                or self.player_one_settings_panel.name_box.get_text() == "" \
+                or self.player_two_settings_panel.name_box.get_text() == "" \
+                or not utils.isfloat(self.settings_panel.gravity_box.get_text()) \
+                or not utils.isint(self.settings_panel.score_box.get_text()) \
+                or float(self.settings_panel.gravity_box.get_text()) <= 0 \
+                or int(self.settings_panel.score_box.get_text()) <= 0:
+            self.start_button.disable()
         else:
-            self.active_editBox.handle_event(event)
+            self.start_button.enable()
 
-    def do_user_event(self, event):
-        """If the user event is create game, a game model will try to be added to the event queue"""
-        if "Create Game" in event.__dict__:
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
-
-    def handle_event(self, event):
-        """Handle the pygame event"""
-        if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONUP:
-            self.do_mouse_event(event)
-        elif event.type == pygame.USEREVENT:
-            self.do_user_event(event)
-        elif event.type == pygame.KEYDOWN:
-            self.do_key_event(event)
+    def process_event(self, event: pygame.event.Event) -> bool:
+        """
+        Process the start button
+        :param event: The event to process.
+        :return: Should return True if this element makes use of this event.
+        """
+        if event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.start_button:
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT,
+                                                         {"Change Model": gameScreen(
+                                                             self._parent_rect, self.ui_manager)}))
+                    return True

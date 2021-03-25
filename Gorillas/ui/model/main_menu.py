@@ -23,7 +23,6 @@ class CenterPanel(pygame_gui.elements.ui_panel.UIPanel):
                  container: Union[IContainerLikeInterface, None] = None):
         self._rect = pygame.Rect((0, 0), self.PANEL_SIZE)
         super(CenterPanel, self).__init__(self._rect, 0, manager, container=container)
-        self._buttons = {}
 
         title_rect = pygame.Rect(self.TITLE_POS, self.TITLE_SIZE)
         self.title = pygame_gui.elements.UILabel(relative_rect=title_rect, text="Doug Gorillas", manager=manager,
@@ -53,6 +52,7 @@ class MainMenuModel(pygame_gui.elements.ui_panel.UIPanel):
 
     def __init__(self, parent_rect: pygame.Rect,
                  manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface):
+        self._parent_rect = parent_rect
         self._rect = parent_rect.copy()
         super(MainMenuModel, self).__init__(parent_rect, 0, manager)
         self.center_panel = CenterPanel(self._rect, manager, self)
@@ -66,7 +66,9 @@ class MainMenuModel(pygame_gui.elements.ui_panel.UIPanel):
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.center_panel.start_button:
-                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": CreateGameMenu(self._rect.size)})) #TODO change CreateGameMenu to use panel
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT,
+                                                         {"Change Model": CreateGameMenu(
+                                                             self._parent_rect, self.ui_manager)}))
                     return True
                 elif event.ui_element == self.center_panel.credits_button:
                     return True
