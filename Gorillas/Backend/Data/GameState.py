@@ -54,8 +54,8 @@ class GameState:
         return self.gorillas[self._player_turn]
 
     def next_player(self):
-        print(self._player_turn)
-        print(len(self.gorillas))
+        #print(self._player_turn)
+        #print(len(self.gorillas))
         self._player_turn = self._player_turn % len(self.gorillas) - 1
 
     @property

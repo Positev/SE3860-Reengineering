@@ -6,6 +6,7 @@ from ui.model.elements.text_box import TextBox
 from ui.model.model import Model
 from ui.model.gameScreen import GameScreenModel
 from color import Color
+import utils
 
 
 class CreateGameMenu(Model):
@@ -88,15 +89,41 @@ class CreateGameMenu(Model):
         self.buttons.append(self.start_game_button)
 
         self.active_editBox = self.player_one_edit_box
+        error_label_size = (screen_size[0]/2, self.label_size[1])
+        error_label_pos = (screen_size[0]/2 - error_label_size[0] / 2, screen_size[1] - screen_size[1]/4 - error_label_size[1])
+        self.error_label = TextBox(self.label_font, error_label_size, error_label_pos)
 
     def create_game(self):
         """Returns the game menu from the name, gravity, and score text fields
         Throws TypeError if gravity is not a float or if score is not an int"""
+        valid_input = True
         player_one_name = self.player_one_edit_box.text
         player_two_name = self.player_two_edit_box.text
+        if player_one_name == player_two_name:
+            self.error_label.text = "NAMES CANNOT BE EQUAL!"
+            valid_input = False
+        elif not utils.isfloat(self.gravity_edit_box.text):
+            self.error_label.text = "GRAVITY MUST BE FLOAT!"
+            valid_input = False
+        elif float(self.gravity_edit_box.text) <= 0:
+            self.error_label.text = "GRAVITY MUST BE GREATER THAN 0"
+            valid_input = False
+        elif not utils.isint(self.score_edit_box.text):
+            self.error_label.text = "SCORE MUST BE INT!"
+            valid_input = False
+        elif float(self.score_edit_box.text) <= 0:
+            self.error_label.text = "SCORE MUST BE GREATER THAN 0"
+            valid_input = False
+
+        if not valid_input:
+            self.error_label.update()
+            self.render[0].add(self.error_label)
+            return self
+
         gravity = float(self.gravity_edit_box.text)
         score = int(self.score_edit_box.text)
-        return GameScreenModel(self.screen_size, player_one_name, player_two_name)
+        return GameScreenModel(self.screen_size, player_one_name, player_two_name, gravity, score)
+
 
     def get_next_edit_box(self):
         """Sets the active edit box to the next one in the list"""
@@ -123,7 +150,7 @@ class CreateGameMenu(Model):
 
     def do_key_event(self, event):
         """If the key press is enter go to the next text box otherwise send the event to the textbox"""
-        if event.key == pygame.K_RETURN:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_TAB:
             self.set_edit_box(self.get_next_edit_box())
         else:
             self.active_editBox.handle_event(event)
@@ -131,12 +158,7 @@ class CreateGameMenu(Model):
     def do_user_event(self, event):
         """If the user event is create game, a game model will try to be added to the event queue"""
         if "Create Game" in event.__dict__:
-            #try:
-                pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
-            #except TypeError:
-                pass  # todo Create an error Label to show the user the problem
-            #except ValueError:
-                pass  # todo Create an error Label to show the user the problem
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, {"Change Model": self.create_game()}))
 
     def handle_event(self, event):
         """Handle the pygame event"""

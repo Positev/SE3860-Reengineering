@@ -10,3 +10,7 @@ class Model:
     def handle_event(self, event):
         """Handle a given event, to be overloaded"""
         pass
+
+    def update(self):
+        """Handle any updates that need to be done on each frame"""
+        pass

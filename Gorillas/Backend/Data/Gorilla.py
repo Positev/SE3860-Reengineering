@@ -28,11 +28,10 @@ class Gorilla:
         g.__dict__.update(self.__dict__)
         return g
 
-    def get_pos(self):
-        return self._x_pos, self._y_pos
-
     def get_throw_start_pos(self):
-        return self._x_pos, self._y_pos + self._height
+
+       return self._x_pos, self._y_pos + 200
+
 
     def get_size(self):
         return self._width, self._height
@@ -98,6 +97,22 @@ class Gorilla:
     @property
     def player_id(self) -> str:
         return self._player_id
+
+    @property
+    def height(self) -> float:
+        return self._height
+
+    @height.setter
+    def height(self, value: float):
+        self._height = value
+
+    @property
+    def width(self) -> float:
+        return self._width
+
+    @height.setter
+    def width(self, value: float):
+        self._width = value
 
     @property
     def arm_state(self) -> int:

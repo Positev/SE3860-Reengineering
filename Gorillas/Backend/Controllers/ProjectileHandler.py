@@ -4,7 +4,7 @@ import math
 from Backend.Data.Enumerators import ProjectileTravelDirection
 from Backend.Data.Projectile import Projectile
 
-PATH_STEP_PER_FRAME = 1
+PATH_STEP_PER_FRAME = 0.1
 
 
 
@@ -44,8 +44,7 @@ class ProjectileHandler:
     def projectile_out_of_screen(self, projectile, screen_size):
         cur_x, cur_y = projectile.get_pos()
         w,h = screen_size
-        return cur_x < 0 or cur_x > w or 0 > cur_y
-
+        return cur_x < 0 or cur_x > w
     # This function will step through each projectile and update thier position
     def move_projectiles(self, projectiles: List[Projectile]) -> List[Projectile]:
         new_projectiles = []

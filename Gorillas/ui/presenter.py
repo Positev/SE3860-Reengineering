@@ -30,4 +30,5 @@ class Presenter:
             self.view.get_surface().fill(self.model.background_color)
             for spriteGroup in self.model.render:
                 spriteGroup.draw(self.view.get_surface())
+            self.model.update()
             self.view.update()
