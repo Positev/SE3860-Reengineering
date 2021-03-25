@@ -33,7 +33,7 @@ class GameScreenModel(Model):
         self.player_pos = {player_1_id: 0, player_2_id: 1}
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
-        self.game_controller = GameController(player_1_id, player_2_id, screen_size, gravity=gravity)
+        self.game_controller = GameController(player_1_id, player_2_id, screen_size,max_score, gravity=gravity)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
 
         self.player_one_score = player_one_score

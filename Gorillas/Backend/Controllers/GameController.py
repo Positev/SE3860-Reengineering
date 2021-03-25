@@ -17,7 +17,7 @@ from Backend.Data.WorldDestruction import WorldDestruction
 class GameController:
 
     # TODO add gravity parameter
-    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], gravity: float = 1):
+    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], max_score, gravity: float = 1):
         building_generator = BuildingGenerator()
         buildings = building_generator.generate_buildings(screen_size)
         self._screen_size = screen_size
@@ -29,7 +29,7 @@ class GameController:
         player_2_pos = buildings[-2].top_center()
         player_2 = Gorilla(player_2_pos[0], player_2_pos[1], player_2_id, GorillaLocation.RIGHT)
 
-        score_keeper = ScoreKeeper(player_1_id, player_2_id)
+        score_keeper = ScoreKeeper(player_1_id, player_2_id,max_score)
         wind = Wind(velocity=1)
         turn_active = False
 
@@ -78,6 +78,10 @@ class GameController:
                 self._game_state.score.record_win(projectileForCollision.sender_id)
                 print(f"\t{player.player_id} has been hit!")
                 winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                if self._game_state.is_game_over():
+                    #TODO: jump to game over screen
+                    raise Exception("TODO: the logic about game over")
+
         if projectileForCollision in projectiles:
             projectiles.remove(projectileForCollision)
 
