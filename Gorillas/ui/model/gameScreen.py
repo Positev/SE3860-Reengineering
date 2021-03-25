@@ -100,7 +100,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                                                                 parent_element=self)
 
         self.max_score = max_score
-        self.gameModel = GameScreenModel(self._rect.size, player_1_id, player_2_id, gravity, max_score)
+        self.gameModel = GameScreenModel(self._game_rect.size, player_1_id, player_2_id, gravity, max_score)
 
         player_one_input_panel_pos = (0, self._rect.height - PlayerInputPanel.PANEL_SIZE[1])
         self.player_one_input_panel = PlayerInputPanel(player_one_input_panel_pos, player_1_id,
