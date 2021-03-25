@@ -58,6 +58,7 @@ class GameScreenModel(Model):
             building_pos = (building.x_pos, building.y_pos - 14)
             building_size = (building.width, building.height * 1.5)
             new_building = Building(building.color, building_pos, building_size)
+            new_building.create_windows()
             self.render[0].add(new_building)
             self.buildings.append(new_building)
         # Create player one's gorilla
@@ -215,7 +216,7 @@ class GameScreenModel(Model):
         self.wind_arrow.rect = pygame.Rect(self.wind_arrow.wind_pos[0], self.wind_arrow.wind_pos[1], new_width,
                                            self.wind_arrow.WIND_HEIGHT)
 
-        #Update the sun
+        # Update the sun
         if self.sun.sun_collide(self.projectile.rect):
             self.sun.image = self.SUN_FROWN
         else:
