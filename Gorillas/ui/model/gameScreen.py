@@ -186,10 +186,11 @@ class GameScreenModel(Model):
 
         # Update the projectile
         if frame.turn_active:
-            projectile_pos = (frame.active_projectiles[0].current_x, frame.active_projectiles[0].current_y)
-            self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0],
-                                               self.projectile.size[1])
-            self.projectile.visible()
+            if len(frame.active_projectiles) > 0:
+                projectile_pos = (frame.active_projectiles[0].current_x, frame.active_projectiles[0].current_y)
+                self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0],
+                                                   self.projectile.size[1])
+                self.projectile.visible()
         elif not self.getting_input:
             self.reset_player_ui()
 
