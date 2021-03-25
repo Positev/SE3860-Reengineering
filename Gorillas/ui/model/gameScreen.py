@@ -21,6 +21,8 @@ class GameScreenModel(Model):
     GORILLA_IMAGE = pygame.image.load("Sprites/Doug/doug.png")
     GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
     GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
+    SUN_FROWN = pygame.image.load("Sprites/Sun/sun_doug_1.png")
+    SUN_SMILE = pygame.image.load("Sprites/Sun/sun_doug_2.png")
 
     def __init__(self, screen_size, player_1_id, player_2_id, gravity, max_score, player_one_score=0, player_two_score=0):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
@@ -212,6 +214,12 @@ class GameScreenModel(Model):
             self.wind_arrow.image = pygame.transform.flip(self.wind_arrow.image, True, False)
         self.wind_arrow.rect = pygame.Rect(self.wind_arrow.wind_pos[0], self.wind_arrow.wind_pos[1], new_width,
                                            self.wind_arrow.WIND_HEIGHT)
+
+        #Update the sun
+        if self.sun.sun_collide(self.projectile.rect):
+            self.sun.image = self.SUN_FROWN
+        else:
+            self.sun.image = self.SUN_SMILE
 
         """Room to update UI Elements when working on combining all branches into a coherent branch"""
 
