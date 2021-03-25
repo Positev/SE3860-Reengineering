@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import winsound
-=======
 from random import  randint, choice
->>>>>>> 45b3f4ea2d8342931d97483090dc643985990885
 from typing import Tuple, List
 
 from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
@@ -85,16 +82,16 @@ class GameController:
                 if collider.c_id == collision.collided_id():
                     self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 30, 0, 0, 15))
                     print(f"\tCollided With -> {collider}")
-					winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
             for player in self._game_state.gorillas:
                 if player.c_id == collision.collided_id():
                     self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 45, 0, 0, 15))
                     self._game_state.score.record_win(projectileForCollision.sender_id)
                     print(f"\t{player.player_id} has been hit!")
-					winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
-					if self._game_state.is_game_over():
-                    #TODO: jump to game over screen
-                    raise Exception("TODO: the logic about game over")
+                    winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    if self._game_state.is_game_over():
+                        # TODO: jump to game over screen
+                        raise Exception("TODO: the logic about game over")
 
         if projectileForCollision in self._game_state.active_projectiles:
             self._game_state.active_projectiles.remove(projectileForCollision)
