@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 from ui.model.main_menu import MainMenuModel
 
+import winsound
 
 class Presenter:
     """Handel the display of the view and handle user interactions to the model"""
@@ -26,6 +27,7 @@ class Presenter:
         self._running = True
         clock = pygame.time.Clock()
         self._current_panel = MainMenuModel(pygame.display.get_surface().get_rect(), manager=self._gui_manager)
+        winsound.PlaySound("sounds\\intro.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
         while self._running:
             time_delta = clock.tick(60)/1000
             self.handle_events()

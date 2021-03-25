@@ -1,3 +1,5 @@
+import winsound
+
 import pygame
 import pygame_gui
 from ui.model.elements.sprites.windArrow import WindArrow
@@ -134,10 +136,12 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                 if event.ui_element == self.player_one_input_panel.launch_button:
                     self.gameModel.game_controller.throw_projectile(float(self.player_one_input_panel.angle_box.get_text()),
                                                                     float(self.player_one_input_panel.velocity_box.get_text()))
+                    winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
                 elif event.ui_element == self.player_two_input_panel.launch_button:
                     self.gameModel.game_controller.throw_projectile(float(self.player_two_input_panel.angle_box.get_text()),
                                                                     float(self.player_two_input_panel.velocity_box.get_text()))
+                    winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
 
 
