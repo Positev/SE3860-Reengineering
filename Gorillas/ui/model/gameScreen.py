@@ -191,6 +191,9 @@ class GameScreenModel(Model):
                 self.projectile.visible()
         elif not self.getting_input:
             self.reset_player_ui()
+            self.projectile.transparent()
+        else:
+            self.projectile.transparent()
 
         # Create collisions if a new collision has appeared
         if self.collision_num < len(frame.destruction):
