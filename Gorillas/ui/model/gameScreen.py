@@ -100,7 +100,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                                                                 parent_element=self)
 
         self.max_score = max_score
-        self.gameModel = GameScreenModel(self._rect.size, player_1_id, player_2_id, gravity)
+        self.gameModel = GameScreenModel(self._rect.size, player_1_id, player_2_id, gravity, max_score)
 
         player_one_input_panel_pos = (0, self._rect.height - PlayerInputPanel.PANEL_SIZE[1])
         self.player_one_input_panel = PlayerInputPanel(player_one_input_panel_pos, player_1_id,
@@ -153,7 +153,7 @@ class GameScreenModel(Model):
     GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
     GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
 
-    def __init__(self, screen_size, player_1_id, player_2_id, gravity):
+    def __init__(self, screen_size, player_1_id, player_2_id, gravity, max_score):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer
         self.render.append(pygame.sprite.Group())  # Main Layer
@@ -162,7 +162,7 @@ class GameScreenModel(Model):
         self.player_pos = {player_1_id: 0, player_2_id: 1}
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
-        self.game_controller = GameController(player_1_id, player_2_id, screen_size, gravity=gravity)
+        self.game_controller = GameController(player_1_id, player_2_id, screen_size, max_score, gravity=gravity)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
 
         # Create the background
