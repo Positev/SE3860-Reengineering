@@ -17,8 +17,8 @@ from Backend.Data.Wind import Wind
 from Backend.Data.WorldDestruction import WorldDestruction
 from Backend.Physics.PymunkGorilla import PymunkGorilla
 
-from Gorillas.ui.model.ending_screen import EndingScreen
-# from Gorillas.ui.model.gameScreen import GameScreenModel
+from ui.model.ending_screen import EndingScreen
+# from ui.model.gameScreen import GameScreenModel
 
 WIND_RANGE = (1, 35)
 
@@ -88,7 +88,6 @@ class GameController:
                 if collider.c_id == collision.collided_id():
                     self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 30, 0, 0, 15))
                     print(f"\tCollided With -> {collider}")
-                    self.__gameScreenPanel.create_ending_screen()
                     winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
             for player in self._game_state.gorillas:
                 if player.c_id == collision.collided_id():
@@ -97,7 +96,6 @@ class GameController:
                     print(f"\t{player.player_id} has been hit!")
                     winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     if self._game_state.is_game_over():
-                        # TODO: jump to game over screen
                         self.__gameScreenPanel.create_ending_screen()
 
 

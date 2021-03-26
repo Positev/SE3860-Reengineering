@@ -2,9 +2,13 @@ import winsound
 
 import pygame
 import pygame_gui
+import random
+from pygame.transform import scale
+
 from ui.model.elements.sprites.windArrow import WindArrow
 from ui.model.elements.sprites.banana import Banana
 from ui.model.elements.sprites.collisions import Collisions
+from ui.model.elements.sprites.windows import Windows
 from ui.model.model import Model
 from color import Color
 from ui.model.elements.sprites.sun import Sun
@@ -16,7 +20,7 @@ from pygame_gui.core.interfaces import IContainerLikeInterface
 import utils
 from typing import Union
 
-from Gorillas.ui.model.ending_screen import EndingScreen
+from ui.model.ending_screen import EndingScreen
 
 
 class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
@@ -162,11 +166,15 @@ class GameScreenModel(Model):
     GORILLA_IMAGE = pygame.image.load("Sprites/Doug/doug.png")
     GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
     GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
+    SUN_FROWN = pygame.image.load("Sprites/Sun/sun_doug_1.png")
+    SUN_SMILE = pygame.image.load("Sprites/Sun/sun_doug_2.png")
 
     def __init__(self, gameScreenPanel,  screen_size, player_1_id, player_2_id, gravity, max_score):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer
+        self.render.append(pygame.sprite.Group())  # Window Layer
         self.render.append(pygame.sprite.Group())  # Main Layer
+        self.render.append(pygame.sprite.Group())  # Destruction Layer
         self.render.append(pygame.sprite.Group())  # UI Layer
 
         self.player_pos = {player_1_id: 0, player_2_id: 1}
@@ -184,28 +192,44 @@ class GameScreenModel(Model):
         sun_x_pos = (screen_size[0] - sun_width) / 2
         sun_y_pos = (screen_size[1] - sun_height) / 10
         self.sun = Sun(sun_width, sun_height, sun_x_pos, sun_y_pos)
-        self.render[1].add(self.sun)
+        self.render[2].add(self.sun)
         # Create the buildings
         self.buildings = []
+        self.windows = []
         for building in self.game_state.building:
             building_pos = (building.x_pos, building.y_pos - building.height)
             building_pos = (building.x_pos, building.y_pos - 14)
             building_size = (building.width, building.height * 1.5)
             new_building = Building(building.color, building_pos, building_size)
+            num_horizontal = random.randint(3, 7)
+            num_vertical = random.randint(4, 8)
+            window_size = [new_building.size[0] / num_horizontal, new_building.size[1] / num_vertical]
+            window_pos = [new_building.pos[0] + window_size[0], new_building.pos[1] + window_size[1]]
+            max_x = new_building.pos[0] + new_building.size[0]
+            max_y = new_building.pos[1] + new_building.size[1]
+            while window_pos[1] < max_y:
+                while window_pos[0] < max_x:
+                    new_window = Windows(window_size, window_pos)
+                    self.render[1].add(new_window)
+                    self.windows.append(new_window)
+                    window_pos[0] += window_size[0] * 2
+
+                window_pos[0] = new_building.pos[0] + window_size[0]
+                window_pos[1] += window_size[1] * 2
             self.render[0].add(new_building)
             self.buildings.append(new_building)
         # Create player one's gorilla
         self.gorilla_one = self.create_gorilla(self.game_state.gorillas[0], self.game_state.building[0],
                                                self.GORILLA_IMAGE)
-        self.render[1].add(self.gorilla_one)
+        self.render[2].add(self.gorilla_one)
         # Create player two's gorilla
         self.gorilla_two = self.create_gorilla(self.game_state.gorillas[1], self.game_state.building[0],
                                                self.GORILLA_IMAGE)
-        self.render[1].add(self.gorilla_two)
+        self.render[2].add(self.gorilla_two)
 
         # Create the wind arrow
         self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
-        self.render[2].add(self.wind_arrow)
+        self.render[4].add(self.wind_arrow)
         # Create a list to store destruction in
         self.collision_list = []
         self.collision_num = 0
@@ -213,11 +237,13 @@ class GameScreenModel(Model):
         # May need to update in later revisions if there are multiple projectiles
         self.projectile = Banana((30, 20), (0, 0))
         self.projectile.transparent()
-        self.render[1].add(self.projectile)
+        self.render[2].add(self.projectile)
         # Blit the objects to the background
         self.background.blit(self.sun.image, self.sun.rect)
         for building in self.buildings:
             self.background.blit(building.image, building.rect)
+        for window in self.windows:
+            self.background.blit(window.image, window.rect)
         self.background.blit(self.gorilla_one.image, self.gorilla_one.rect)
         self.background.blit(self.gorilla_two.image, self.gorilla_two.rect)
         """Space to add other UI elements in later when Adam is ready"""
@@ -257,12 +283,14 @@ class GameScreenModel(Model):
                 self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0],
                                                    self.projectile.size[1])
                 self.projectile.visible()
+        else:
+            self.projectile.transparent()
 
         # Create collisions if a new collision has appeared
         if self.collision_num < len(frame.destruction):
             new_collision = Collisions(frame.destruction[self.collision_num])
             self.collision_list.append(new_collision)
-            self.render[1].add(new_collision)
+            self.render[3].add(new_collision)
             self.background.blit(self.collision_list[self.collision_num].image,
                                  self.collision_list[self.collision_num].rect)
             self.collision_num = self.collision_num + 1
@@ -275,6 +303,17 @@ class GameScreenModel(Model):
             self.wind_arrow.image = pygame.transform.flip(self.wind_arrow.image, True, False)
         self.wind_arrow.rect = pygame.Rect(self.wind_arrow.wind_pos[0], self.wind_arrow.wind_pos[1], new_width,
                                            self.wind_arrow.WIND_HEIGHT)
+
+        # Update the sun
+        if self.sun.sun_collide(self.projectile):
+            self.sun.image = self.SUN_FROWN
+            self.sun.image = scale(self.sun.image, (int(self.sun.size[0]), int(self.sun.size[1])))
+        else:
+            self.sun.image = self.SUN_SMILE
+            self.sun.image = scale(self.sun.image, (int(self.sun.size[0]), int(self.sun.size[1])))
+
+        """Room to update UI Elements when working on combining all branches into a coherent branch"""
+
 
     def update(self):
         """Get the next frame from game state and update render"""

@@ -12,6 +12,7 @@ class Banana(pygame.sprite.Sprite):
         # Create image
         self.image = pygame.image.load("Sprites/banana.png")
         self.size = size
+        self.pos = pos
 
     def transparent(self):
         """Make the projectile transparent so that it isn't always on-screen"""
