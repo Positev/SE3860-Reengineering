@@ -32,7 +32,7 @@ class Building:
         return x, y
 
     def copy(self):
-        return Building(self.x_pos,self.y_pos, tuple(c for c in self.color), self.width, self.height)
+        return Building(self.x_pos,self.y_pos, tuple(c for c in self.color), self.width, self.height, self._key)
 
     @property
     def x_pos(self) -> float:
