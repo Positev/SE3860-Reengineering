@@ -5,7 +5,7 @@ import pygame_gui
 from pygame_gui.core.interfaces import IContainerLikeInterface
 from typing import Union
 
-from Gorillas.Backend.Data.GameState import GameState
+from Backend.Data.GameState import GameState
 
 
 class EndingScreen(pygame_gui.elements.ui_panel.UIPanel):

@@ -17,8 +17,8 @@ from Backend.Data.Wind import Wind
 from Backend.Data.WorldDestruction import WorldDestruction
 from Backend.Physics.PymunkGorilla import PymunkGorilla
 
-from Gorillas.ui.model.ending_screen import EndingScreen
-# from Gorillas.ui.model.gameScreen import GameScreenModel
+from ui.model.ending_screen import EndingScreen
+# from ui.model.gameScreen import GameScreenModel
 
 WIND_RANGE = (1, 35)
 
