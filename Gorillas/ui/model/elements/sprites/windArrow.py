@@ -3,7 +3,7 @@ from Backend.Data.Enumerators import WindDirection
 
 
 class WindArrow(pygame.sprite.Sprite):
-    WIND_DEFAULT_WIDTH = 50
+    WIND_DEFAULT_WIDTH = 5
     WIND_HEIGHT = 30
 
     def __init__(self, direction, velocity, screen_size):
