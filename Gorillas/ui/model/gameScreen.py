@@ -173,8 +173,8 @@ class GameScreenModel(Model):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer
         self.render.append(pygame.sprite.Group())  # Window Layer
-        self.render.append(pygame.sprite.Group())  # Destruction Layer
         self.render.append(pygame.sprite.Group())  # Main Layer
+        self.render.append(pygame.sprite.Group())  # Destruction Layer
         self.render.append(pygame.sprite.Group())  # UI Layer
 
         self.player_pos = {player_1_id: 0, player_2_id: 1}
@@ -192,7 +192,7 @@ class GameScreenModel(Model):
         sun_x_pos = (screen_size[0] - sun_width) / 2
         sun_y_pos = (screen_size[1] - sun_height) / 10
         self.sun = Sun(sun_width, sun_height, sun_x_pos, sun_y_pos)
-        self.render[3].add(self.sun)
+        self.render[2].add(self.sun)
         # Create the buildings
         self.buildings = []
         self.windows = []
@@ -221,11 +221,11 @@ class GameScreenModel(Model):
         # Create player one's gorilla
         self.gorilla_one = self.create_gorilla(self.game_state.gorillas[0], self.game_state.building[0],
                                                self.GORILLA_IMAGE)
-        self.render[3].add(self.gorilla_one)
+        self.render[2].add(self.gorilla_one)
         # Create player two's gorilla
         self.gorilla_two = self.create_gorilla(self.game_state.gorillas[1], self.game_state.building[0],
                                                self.GORILLA_IMAGE)
-        self.render[3].add(self.gorilla_two)
+        self.render[2].add(self.gorilla_two)
 
         # Create the wind arrow
         self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
@@ -237,7 +237,7 @@ class GameScreenModel(Model):
         # May need to update in later revisions if there are multiple projectiles
         self.projectile = Banana((30, 20), (0, 0))
         self.projectile.transparent()
-        self.render[3].add(self.projectile)
+        self.render[2].add(self.projectile)
         # Blit the objects to the background
         self.background.blit(self.sun.image, self.sun.rect)
         for building in self.buildings:
@@ -290,7 +290,7 @@ class GameScreenModel(Model):
         if self.collision_num < len(frame.destruction):
             new_collision = Collisions(frame.destruction[self.collision_num])
             self.collision_list.append(new_collision)
-            self.render[2].add(new_collision)
+            self.render[3].add(new_collision)
             self.background.blit(self.collision_list[self.collision_num].image,
                                  self.collision_list[self.collision_num].rect)
             self.collision_num = self.collision_num + 1
