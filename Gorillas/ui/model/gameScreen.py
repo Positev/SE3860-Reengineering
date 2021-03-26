@@ -205,7 +205,7 @@ class GameScreenModel(Model):
             num_vertical = random.randint(4, 8)
             window_size = [new_building.size[0] / num_horizontal, new_building.size[1] / num_vertical]
             window_pos = [new_building.pos[0] + window_size[0], new_building.pos[1] + window_size[1]]
-            max_x = new_building.pos[0] + new_building.size[0]
+            max_x = (new_building.pos[0] + new_building.size[0]) - window_size[0]
             max_y = new_building.pos[1] + new_building.size[1]
             while window_pos[1] < max_y:
                 while window_pos[0] < max_x:
