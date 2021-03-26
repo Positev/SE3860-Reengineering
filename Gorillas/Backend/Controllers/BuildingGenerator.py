@@ -86,8 +86,17 @@ class BuildingGenerator:
 
             generated_buildings.append(new_building)
 
+
+        generated_buildings.sort(key = lambda building: building.x_pos)
+
+        for i in range(len(generated_buildings)):
+            generated_buildings[i]._key = i
+
         return generated_buildings
 
 
 if __name__ == '__main__':
-    BuildingGenerator()._generate_hill_terrain((200, 300))
+    buildings = BuildingGenerator()._generate_hill_terrain((200, 300))
+    for b in buildings:
+        print(b)
+

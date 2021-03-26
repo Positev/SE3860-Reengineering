@@ -19,6 +19,8 @@ class GameState:
             self.__wind = wind
             self.__turn_active = turn_active
             self._player_turn = 0
+            self.__is_game_over = False
+            self.__winner_id = None
         else:
              raise Exception("Wrong type parameter.")
 
@@ -123,6 +125,19 @@ class GameState:
             self.__turn_active = turn_active
         else:
             raise Exception("Wrong type parameter.")
+
+    def is_game_over(self):
+        winner = self.__score.check_score_to_win()
+        if winner is None:
+            return False
+        else:
+            self.__winner_id=winner
+            return True
+
+    @property
+    def winner(self):
+        return self.__winner_id
+
 
     def __str__(self):
 

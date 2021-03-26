@@ -1,61 +1,78 @@
 import pygame
-from ui.model.model import Model
-from color import Color
-from ui.model.elements.button import Button
-from ui.model.elements.text_box import TextBox
+import pygame_gui
+import operator
+from typing import Union
+from pygame_gui.core.interfaces import IContainerLikeInterface
 from ui.model.create_game_menu import CreateGameMenu
 
 
-class MainMenuModel(Model):
-    """A Button for selecting a menu option
-    Function: run"""
+class CenterPanel(pygame_gui.elements.ui_panel.UIPanel):
+    """The panel to be centered in the main menu containing the Title and buttons"""
+    DISPLAY_TITLE = "Main Menu"
+    PANEL_SIZE = (400, 400)
 
-    BACKGROUND_COLOR = Color.WHITE
+    TITLE_SIZE = (400, 80)
+    TITLE_POS = (0, 40)
+    BUTTON_SIZE = (240, 60)
+    START_BUTTON_POS = (70, 160)
+    CREDITS_BUTTON_POS = (70, 240)
+    QUIT_BUTTON_POS = (70, 320)
 
-    BUTTON_HEIGHT = 80
-    BUTTON_PADDING = 10
-    MENU_TEXT = "Doug Gorillas"
-    BUTTON_FONT_SIZE = 24
-    MENU_TEXT_FONT_SIZE = 72
+    def __init__(self, parent_rect: pygame.Rect,
+                 manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface,
+                 container: Union[IContainerLikeInterface, None] = None):
+        self._rect = pygame.Rect((0, 0), self.PANEL_SIZE)
+        super(CenterPanel, self).__init__(self._rect, 0, manager, container=container)
 
-    MENU_TEXT_HEIGHT = 120
+        title_rect = pygame.Rect(self.TITLE_POS, self.TITLE_SIZE)
+        self.title = pygame_gui.elements.UILabel(relative_rect=title_rect, text="Doug Gorillas", manager=manager,
+                                                 container=self, object_id="#Title")
 
-    def __init__(self, screen_size):
-        super(MainMenuModel, self).__init__(self.BACKGROUND_COLOR)
-        self.button_data = {
-            "Start Game": pygame.event.Event(pygame.USEREVENT, {"Change Model": CreateGameMenu(screen_size)}),
-            "Credits": pygame.event.Event(pygame.NOEVENT),
-            "Quit": pygame.event.Event(pygame.QUIT)
-        }
-        self.render.append(pygame.sprite.Group())
-        self.buttons = list()
+        start_button_rect = pygame.Rect(self.START_BUTTON_POS, self.BUTTON_SIZE)
+        self.start_button = pygame_gui.elements.UIButton(relative_rect=start_button_rect,
+                                                         text="Start Game",
+                                                         container=self,
+                                                         manager=manager)
+        credits_button_rect = pygame.Rect(self.CREDITS_BUTTON_POS, self.BUTTON_SIZE)
+        self.credits_button = pygame_gui.elements.UIButton(relative_rect=credits_button_rect,
+                                                           text="Credits",
+                                                           container=self,
+                                                           manager=manager)
+        quit_button_rect = pygame.Rect(self.QUIT_BUTTON_POS, self.BUTTON_SIZE)
+        self.quit_button = pygame_gui.elements.UIButton(relative_rect=quit_button_rect,
+                                                        text="Quit",
+                                                        container=self,
+                                                        manager=manager)
 
-        self.button_font = pygame.font.Font(pygame.font.get_default_font(), self.BUTTON_FONT_SIZE)
-        self.menu_font = pygame.font.Font(pygame.font.get_default_font(), self.MENU_TEXT_FONT_SIZE)
-        # Create menu buttons
-        button_size = (screen_size[0] / 2, self.BUTTON_HEIGHT)
-        button_x_pos = (screen_size[0] - button_size[0]) / 2
-        button_block_size = (self.BUTTON_PADDING * len(self.button_data) + self.BUTTON_HEIGHT * len(self.button_data))
-        button_start_position = (screen_size[1] - button_block_size) / 2
+        self.set_relative_position(tuple(map(operator.sub, parent_rect.center, self._rect.center)))
 
-        i = 0
-        for key, value in self.button_data.items():
-            button_y_pos = button_start_position + self.BUTTON_PADDING * i + self.BUTTON_HEIGHT * i
-            button = Button(value, key, self.button_font, button_size,
-                            (button_x_pos, button_y_pos))
-            self.render[0].add(button)
-            self.buttons.append(button)
-            i += 1
 
-        # Create Menu Text
-        menu_text_size = (screen_size[0], pygame.font.Font.size(self.menu_font, "")[1])
-        menu_text_pos = ((screen_size[0] - menu_text_size[0]) / 2, button_start_position/2)
-        menu_text = TextBox(self.menu_font, menu_text_size, menu_text_pos, text=self.MENU_TEXT)
+class MainMenuModel(pygame_gui.elements.ui_panel.UIPanel):
+    """A Panel for main menu and starting the game"""
 
-        self.render[0].add(menu_text)
+    def __init__(self, parent_rect: pygame.Rect,
+                 manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface):
+        self._parent_rect = parent_rect
+        self._rect = parent_rect.copy()
+        super(MainMenuModel, self).__init__(parent_rect, 0, manager)
+        self.center_panel = CenterPanel(self._rect, manager, self)
 
-    def handle_event(self, event):
-        """Checks for mouse events and sends to buttons"""
-        if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONUP:
-            for button in self.buttons:
-                button.handle_event(event)
+    def process_event(self, event: pygame.event.Event) -> bool:
+        """
+        Process the button events in the menu. Overrides Parent
+        :param event: The event to process.
+        :return: Should return True if this element makes use of this event.
+        """
+        if event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.center_panel.start_button:
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT,
+                                                         {"Change Model": CreateGameMenu(
+                                                             self._parent_rect, self.ui_manager)}))
+                    return True
+                elif event.ui_element == self.center_panel.credits_button:
+                    return True
+                    pass
+                elif event.ui_element == self.center_panel.quit_button:
+                    pygame.event.post(pygame.event.Event(pygame.QUIT))
+                    return True
