@@ -96,7 +96,7 @@ class CreateGameMenu(pygame_gui.elements.ui_panel.UIPanel):
                                                          container=self,
                                                          manager=manager)
         self.start_button.set_relative_position(
-            (self._rect.width/2 - self.start_button.relative_rect.centerx, self.start_button.relative_rect.y))
+            (self._rect.width / 2 - self.start_button.relative_rect.centerx, self.start_button.relative_rect.y))
 
         self.set_relative_position(tuple(map(operator.sub, parent_rect.center, self._rect.center)))
 

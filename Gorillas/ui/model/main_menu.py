@@ -1,9 +1,11 @@
-import pygame
-import pygame_gui
 import operator
 from typing import Union
+
+import pygame
+import pygame_gui
 from pygame_gui.core.interfaces import IContainerLikeInterface
 from ui.model.create_game_menu import CreateGameMenu
+from ui.model.credits_screen import CreditsScreen
 
 
 class CenterPanel(pygame_gui.elements.ui_panel.UIPanel):
@@ -71,8 +73,10 @@ class MainMenuModel(pygame_gui.elements.ui_panel.UIPanel):
                                                              self._parent_rect, self.ui_manager)}))
                     return True
                 elif event.ui_element == self.center_panel.credits_button:
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT,
+                                                         {"Change Model": CreditsScreen(
+                                                             self._parent_rect, self.ui_manager)}))
                     return True
-                    pass
                 elif event.ui_element == self.center_panel.quit_button:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
                     return True

@@ -34,7 +34,10 @@
       "name": "montserrat",
       "size": "55",
       "bold": "1",
-      "regular_resource": { "package": "ui", "resource": "Montserrat-Bold.ttf"}
+      "regular_resource": {
+        "package": "ui",
+        "resource": "Montserrat-Bold.ttf"
+      }
     }
   }
 }

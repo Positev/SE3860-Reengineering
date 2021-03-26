@@ -1,26 +1,54 @@
+import operator
+import random
 import winsound
+from typing import Union
 
 import pygame
 import pygame_gui
-import random
-from pygame.transform import scale
-
-from ui.model.elements.sprites.windArrow import WindArrow
-from ui.model.elements.sprites.banana import Banana
-from ui.model.elements.sprites.collisions import Collisions
-from ui.model.elements.sprites.windows import Windows
-from ui.model.model import Model
-from color import Color
-from ui.model.elements.sprites.sun import Sun
-from ui.model.elements.sprites.gorilla import Gorilla
-from Backend.Controllers.GameController import GameController
-from ui.model.elements.sprites.building import Building
-from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
-from pygame_gui.core.interfaces import IContainerLikeInterface
 import utils
-from typing import Union
-
+from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
+from Backend.Controllers.GameController import GameController
+from color import Color
+from pygame.transform import scale
+from pygame_gui.core.interfaces import IContainerLikeInterface
+from ui.model.elements.sprites.banana import Banana
+from ui.model.elements.sprites.building import Building
+from ui.model.elements.sprites.collisions import Collisions
+from ui.model.elements.sprites.gorilla import Gorilla
+from ui.model.elements.sprites.sun import Sun
+from ui.model.elements.sprites.windArrow import WindArrow
+from ui.model.elements.sprites.windows import Windows
 from ui.model.ending_screen import EndingScreen
+from ui.model.model import Model
+
+
+class PlayerHitPanel(pygame_gui.elements.ui_panel.UIPanel):
+    PANEL_SIZE = (300, 200)
+
+    def __init__(self, panel_pos: (int, int), winner_id: str, loser_id: str, winner_score: int, loser_score: int,
+                 manager: pygame_gui.core.interfaces.manager_interface.IUIManagerInterface,
+                 container: Union[IContainerLikeInterface, None] = None):
+        self._rect = pygame.Rect(panel_pos, self.PANEL_SIZE)
+        super(PlayerHitPanel, self).__init__(self._rect, 0, manager, container=container)
+
+        self._TEXT_BOX_RECT = pygame.Rect(0, 0, 300, 150)
+        self._NEXT_ROUND_RECT = pygame.Rect(0, 150, 150, 50)
+
+        self.text_box = pygame_gui.elements.UITextBox(relative_rect=self._TEXT_BOX_RECT,
+                                                      html_text="Player " + winner_id + " won the round<br>"
+                                                                + "Current Scores:<br>"
+                                                                + winner_id + ": " + str(winner_score) + "<br>"
+                                                                + loser_id + ": " + str(loser_score) + "<br>",
+                                                      manager=manager,
+                                                      container=self)
+
+        self.next_round_button = pygame_gui.elements.UIButton(relative_rect=self._NEXT_ROUND_RECT,
+                                                              text="Next Round",
+                                                              container=self,
+                                                              manager=manager)
+        self.next_round_button.set_relative_position(
+            (self._rect.width / 2 - self.next_round_button.relative_rect.centerx,
+             self.next_round_button.relative_rect.y))
 
 
 class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
@@ -77,14 +105,13 @@ class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
         self.launch_button.set_relative_position(
             (self._rect.width / 2 - self.launch_button.relative_rect.centerx, self.launch_button.relative_rect.y))
 
-
     def update(self, time_delta: float):
         super().update(time_delta)
-        if not self.is_enabled\
+        if not self.is_enabled \
                 or not utils.isint(self.angle_box.get_text()) \
                 or not utils.isint(self.velocity_box.get_text()) \
                 or float(self.angle_box.get_text()) <= 0 \
-                or int(self.velocity_box.get_text()) <= 0\
+                or int(self.velocity_box.get_text()) <= 0 \
                 or int(self.velocity_box.get_text()) > 2000:
             self.launch_button.disable()
         else:
@@ -119,12 +146,19 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
         self.player_two_input_panel = PlayerInputPanel(player_two_input_panel_pos, player_2_id,
                                                        manager=manager, container=self)
 
+        self.roundEnd = None
 
     def update(self, time_delta: float):
         super().update(time_delta)
         self.gameModel.update()
         self.gameModel.draw(self.game_surface_element.image)
-        if self.gameModel.game_state.turn_active:
+        if self.roundEnd is None and self.gameModel.game_state.is_game_over():
+            # self.create_ending_screen()
+            self.roundEnd = PlayerHitPanel(
+                tuple(map(operator.sub, self._rect.center, (PlayerHitPanel.PANEL_SIZE[0]/2, PlayerHitPanel.PANEL_SIZE[1]/2))),
+                self.gameModel.game_state.winner, self.gameModel.game_state.winner, 0, 0,
+                manager=self.ui_manager, container=self)
+        elif self.gameModel.game_state.turn_active:
             self.player_one_input_panel.disable()
             self.player_two_input_panel.disable()
         elif self.gameModel.game_state.active_player().player_id == self._playerids[0]:
@@ -143,21 +177,25 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.player_one_input_panel.launch_button:
-                    self.gameModel.game_controller.throw_projectile(float(self.player_one_input_panel.angle_box.get_text()),
-                                                                    float(self.player_one_input_panel.velocity_box.get_text()))
+                    self.gameModel.game_controller.throw_projectile(
+                        float(self.player_one_input_panel.angle_box.get_text()),
+                        float(self.player_one_input_panel.velocity_box.get_text()))
                     winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
                 elif event.ui_element == self.player_two_input_panel.launch_button:
-                    self.gameModel.game_controller.throw_projectile(float(self.player_two_input_panel.angle_box.get_text()),
-                                                                    float(self.player_two_input_panel.velocity_box.get_text()))
+                    self.gameModel.game_controller.throw_projectile(
+                        float(self.player_two_input_panel.angle_box.get_text()),
+                        float(self.player_two_input_panel.velocity_box.get_text()))
                     winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    return True
+                elif self.roundEnd is not None and event.ui_element == self.roundEnd.next_round_button:
+                    print("Create new Game")
                     return True
 
     def create_ending_screen(self):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT,
                                              {"Change Model": EndingScreen(self.gameModel.game_state,
                                                                            self._game_rect, self.ui_manager)}))
-
 
 
 class GameScreenModel(Model):
@@ -170,7 +208,7 @@ class GameScreenModel(Model):
     SUN_FROWN = pygame.image.load("Sprites/Sun/sun_doug_1.png")
     SUN_SMILE = pygame.image.load("Sprites/Sun/sun_doug_2.png")
 
-    def __init__(self, gameScreenPanel,  screen_size, player_1_id, player_2_id, gravity, max_score):
+    def __init__(self, gameScreenPanel, screen_size, player_1_id, player_2_id, gravity, max_score):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer 0
         self.render.append(pygame.sprite.Group())  # Window Layer 1
@@ -182,7 +220,8 @@ class GameScreenModel(Model):
         self.player_pos = {player_1_id: 0, player_2_id: 1}
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
-        self.game_controller = GameController(gameScreenPanel, player_1_id, player_2_id, screen_size, max_score, gravity=gravity)
+        self.game_controller = GameController(player_1_id, player_2_id, screen_size, max_score,
+                                              gravity=gravity)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
         print(self.game_state)
         # Create the background
@@ -319,7 +358,6 @@ class GameScreenModel(Model):
         pygame.display.flip()
         """Room to update UI Elements when working on combining all branches into a coherent branch"""
 
-
     def update(self):
         """Get the next frame from game state and update render"""
         pre_adapt_state = self.game_controller.next_frame()
@@ -329,6 +367,3 @@ class GameScreenModel(Model):
         else:
             pygame.time.Clock().tick(60)
         self.update_frame(self.game_state)
-
-
-

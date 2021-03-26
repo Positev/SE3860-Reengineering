@@ -1,5 +1,5 @@
 import pygame
-import random
+
 
 class Building(pygame.sprite.Sprite):
     WINDOW_COLOR = (192, 192, 192)
@@ -12,6 +12,3 @@ class Building(pygame.sprite.Sprite):
         self.image.fill(color)
         self.size = size
         self.pos = pos
-
-
-

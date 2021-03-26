@@ -2,9 +2,8 @@ import math
 from math import cos, sin
 from typing import Tuple
 
-import pymunk, time
-from pymunk import Vec2d
-
+import pymunk
+import time
 # Physics handler will take respobsibility of creating and moving projecitles
 # To progress animation, call next_time_step then get the active projectiles
 from Backend.Controllers.GameController import GameController
@@ -14,6 +13,7 @@ from Backend.Physics.PymunkBuilding import PymunkBuilding
 from Backend.Physics.PymunkDestruction import PymunkDestruction
 from Backend.Physics.PymunkGorilla import PymunkGorilla
 from Backend.Physics.PymunkProjectile import PymunkProjectile
+from pymunk import Vec2d
 
 
 class PhysicsHandler:
@@ -99,7 +99,7 @@ class PhysicsHandler:
         else:
             velocity = velocity[0] + wind_diff, velocity[1]
 
-        new_projectile = PymunkProjectile(velocity,angle, start_pos[0], start_pos[1], sender_id, sprite,
+        new_projectile = PymunkProjectile(velocity, angle, start_pos[0], start_pos[1], sender_id, sprite,
                                           travel_direction, key=self.CREATED_PROJECTILES)
         self.CREATED_PROJECTILES += 1
         # self.active_projectiles.append(new_projectile)

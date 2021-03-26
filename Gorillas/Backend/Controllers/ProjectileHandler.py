@@ -1,5 +1,5 @@
-from typing import Tuple, List
 import math
+from typing import Tuple, List
 
 from Backend.Data.Enumerators import ProjectileTravelDirection
 from Backend.Data.Projectile import Projectile
@@ -7,11 +7,9 @@ from Backend.Data.Projectile import Projectile
 PATH_STEP_PER_FRAME = 0.1
 
 
-
 # TODO Docs
 # TODO Write tests for this
 class ProjectileHandler:
-
     CREATED_PROJECTILES = 0
     GRAVITY = .001
 
@@ -43,8 +41,9 @@ class ProjectileHandler:
 
     def projectile_out_of_screen(self, projectile, screen_size):
         cur_x, cur_y = projectile.get_pos()
-        w,h = screen_size
+        w, h = screen_size
         return cur_x < 0 or cur_x > w
+
     # This function will step through each projectile and update thier position
     def move_projectiles(self, projectiles: List[Projectile]) -> List[Projectile]:
         new_projectiles = []
@@ -56,9 +55,9 @@ class ProjectileHandler:
         return new_projectiles
 
     # This function just creates a new projectile and adds it to the list of projectiles
-    def launch_projectile(self, velocity: float, angle: float,  start_pos: Tuple[float, float], sprite: int,
+    def launch_projectile(self, velocity: float, angle: float, start_pos: Tuple[float, float], sprite: int,
                           sender_id: str, travel_direction: ProjectileTravelDirection) -> Projectile:
-
-        new_projectile = Projectile(velocity, angle, start_pos[0], start_pos[1], sender_id, sprite,travel_direction, key=self.CREATED_PROJECTILES)
+        new_projectile = Projectile(velocity, angle, start_pos[0], start_pos[1], sender_id, sprite, travel_direction,
+                                    key=self.CREATED_PROJECTILES)
         self.CREATED_PROJECTILES += 1
         return new_projectile

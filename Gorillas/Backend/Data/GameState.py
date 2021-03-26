@@ -4,13 +4,13 @@ from Backend.Data.Wind import Wind
 
 class GameState:
     def __init__(self, building, gorillas, active_projectiles, destruction, score, wind, turn_active):
-        if(isinstance(building, list) and
-           isinstance(gorillas, list) and
-           isinstance(active_projectiles, list) and
-           isinstance(destruction, list) and
-           isinstance(score, ScoreKeeper) and #TODO Should not be score keeper
-           isinstance(wind, Wind) and
-           isinstance(turn_active, bool)):
+        if (isinstance(building, list) and
+                isinstance(gorillas, list) and
+                isinstance(active_projectiles, list) and
+                isinstance(destruction, list) and
+                isinstance(score, ScoreKeeper) and  # TODO Should not be score keeper
+                isinstance(wind, Wind) and
+                isinstance(turn_active, bool)):
             self.__building = building
             self.__gorillas = gorillas
             self.__active_projectiles = active_projectiles
@@ -22,11 +22,10 @@ class GameState:
             self.__is_game_over = False
             self.__winner_id = None
         else:
-             raise Exception("Wrong type parameter.")
-
+            raise Exception("Wrong type parameter.")
 
     def copy(self):
-        gs =  GameState(
+        gs = GameState(
             [build.copy() for build in self.__building],
             [g.copy() for g in self.__gorillas],
             [p.copy() for p in self.active_projectiles],
@@ -38,8 +37,6 @@ class GameState:
 
         gs.__dict__.update(self.__dict__)
         return gs
-
-
 
     @property
     def building(self):
@@ -56,8 +53,8 @@ class GameState:
         return self.gorillas[self._player_turn]
 
     def next_player(self):
-        #print(self._player_turn)
-        #print(len(self.gorillas))
+        # print(self._player_turn)
+        # print(len(self.gorillas))
         self._player_turn = self._player_turn % len(self.gorillas) - 1
 
     @property
@@ -102,7 +99,7 @@ class GameState:
         if (isinstance(score, ScoreKeeper)):
             self.__score = score
         else:
-            raise Exception("Wrong type parameter.")      
+            raise Exception("Wrong type parameter.")
 
     @property
     def wind(self):
@@ -113,7 +110,7 @@ class GameState:
         if (isinstance(wind, Wind)):
             self.__wind = wind
         else:
-            raise Exception("Wrong type parameter.")   
+            raise Exception("Wrong type parameter.")
 
     @property
     def turn_active(self):
@@ -131,20 +128,19 @@ class GameState:
         if winner is None:
             return False
         else:
-            self.__winner_id=winner
+            self.__winner_id = winner
             return True
 
     @property
     def winner(self):
         return self.__winner_id
 
-
     def __str__(self):
 
         newline = '\n'
         tabbednewline = '\n\t'
         out = [
-            '-'*90,
+            '-' * 90,
             f"Buildings: {tabbednewline}{tabbednewline.join([str(building) for building in self.building])}",
             f"Gorillas: {tabbednewline}{tabbednewline.join([str(gorilla) for gorilla in self.gorillas])}",
             f"Active Projectiles: {tabbednewline}{tabbednewline.join([str(projectile) for projectile in self.active_projectiles])}",
@@ -152,8 +148,7 @@ class GameState:
             f"Score: {self.score}",
             f"Wind: {self.wind}",
             f"Turn Active: {self.turn_active}",
-            '-'*90,
+            '-' * 90,
         ]
 
         return '\n'.join(out)
-

@@ -3,8 +3,8 @@
 # player_id will link the gorilla class to the actual player.
 # This class should provide the state information that allows the front end to render a gorilla that has
 # its left arm up, right arm up, or both arms down at some position.
-from Backend.Data.Enumerators import ArmState, GorillaLocation
 import pygame
+from Backend.Data.Enumerators import ArmState, GorillaLocation
 
 WIDTH = 50
 HEIGHT = 50
@@ -29,9 +29,7 @@ class Gorilla:
         return g
 
     def get_throw_start_pos(self):
-
-       return self._x_pos, self._y_pos + 200
-
+        return self._x_pos, self._y_pos + 200
 
     def get_size(self):
         return self._width, self._height

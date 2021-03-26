@@ -5,19 +5,19 @@ from Backend.Data.Enumerators import ProjectileTravelDirection
 WIDTH = 30
 HEIGHT = 20
 
+
 class Projectile:
-    def __init__(self, 
-                 initial_velocity: float, 
-                 launch_angle: float, 
-                 start_x:float, 
+    def __init__(self,
+                 initial_velocity: float,
+                 launch_angle: float,
+                 start_x: float,
                  start_y: float,
-                 sender_id: str, 
+                 sender_id: str,
                  sprite: int,
                  direction: ProjectileTravelDirection,
                  key: int = 0,
-                 width = WIDTH,
-                 height = HEIGHT):
-
+                 width=WIDTH,
+                 height=HEIGHT):
         self._initial_velocity = initial_velocity
         self._launch_angle = launch_angle
         self._start_x = start_x
@@ -32,8 +32,6 @@ class Projectile:
         self._key = key
         self._sender_id = sender_id
         self._sprite = sprite
-
-
 
     def __str__(self):
         out = [
@@ -53,7 +51,8 @@ class Projectile:
         return ','.join(out)
 
     def copy(self):
-        p = Projectile(self.initial_velocity, self.launch_angle, self.start_x, self.start_y, self.sender_id, self.sprite, self._direction)
+        p = Projectile(self.initial_velocity, self.launch_angle, self.start_x, self.start_y, self.sender_id,
+                       self.sprite, self._direction)
         p.__dict__.update(self.__dict__)
         return p
 
@@ -93,7 +92,6 @@ class Projectile:
     def rotation(self, value: float):
         self._rotation = value
 
-
     @property
     def start_x(self) -> float:
         return self._start_x
@@ -109,8 +107,6 @@ class Projectile:
     @start_y.setter
     def start_y(self, value: float):
         self._start_y = value
-
-
 
     @property
     def current_x(self) -> float:
@@ -128,7 +124,6 @@ class Projectile:
     def current_y(self, value: float):
         self._current_y = value
 
-
     @property
     def width(self) -> float:
         return self._width
@@ -145,10 +140,6 @@ class Projectile:
     def height(self, value: float):
         self._height = value
 
-
-
-
-
     @property
     def sender_id(self) -> str:
         return self._sender_id
@@ -161,9 +152,8 @@ class Projectile:
     def flight_time(self) -> str:
         return self._flight_time
 
-    
     def increment_flight_time(self):
-        #TODO Probably can tune this value.
+        # TODO Probably can tune this value.
         self._flight_time += .2
 
     @property
@@ -172,7 +162,7 @@ class Projectile:
 
     @sprite.setter
     def sprite(self, value: int):
-        #TODO Enforce that sprite is instance of enum
+        # TODO Enforce that sprite is instance of enum
         self._sprite = value
 
     @property

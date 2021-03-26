@@ -1,8 +1,7 @@
 import pygame
 import pygame_gui
+
 from ui.presenter import Presenter
-from ui.model.main_menu import MainMenuModel
-from pygame.locals import *
 
 
 class App:
@@ -13,7 +12,7 @@ class App:
 
     def on_init(self):
         pygame.init()
-        self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF )
+        self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._manager = pygame_gui.UIManager(self.size, 'ui/theme.json')
 
     def on_cleanup(self):

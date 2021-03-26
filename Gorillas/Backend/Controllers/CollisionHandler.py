@@ -1,16 +1,13 @@
 import pygame
-from Backend.Data.Enumerators import CollisionResult
-from Backend.Data.Collision import Collision
-
 from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
+from Backend.Data.Collision import Collision
+from Backend.Data.Enumerators import CollisionResult
 
 
 class CollisionHandler:
 
     @staticmethod
     def test_collisions(projectiles: list, buildings: list, players: list, screen_size):
-
-
 
         if projectiles and buildings and players:
             coordinate_adapter = CoordinateAdapter(screen_size)
@@ -22,10 +19,13 @@ class CollisionHandler:
                 for player in adapted_gorillas:
                     if pygame.sprite.collide_rect(projectile, player):
                         if player.player_id != projectile.sender_id:
-                            collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(1), projectile.key(), player.player_id))
+                            collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(1),
+                                                        projectile.key(), player.player_id))
                 for building in adapted_buildings:
                     if pygame.sprite.collide_rect(projectile, building):
-                        collisions.append(Collision(projectile.current_x, projectile.current_y, CollisionResult(2), projectile.key(), building.key()))
+                        collisions.append(
+                            Collision(projectile.current_x, projectile.current_y, CollisionResult(2), projectile.key(),
+                                      building.key()))
             return collisions
         elif not buildings:
             raise Exception("The list of buildings is empty.")

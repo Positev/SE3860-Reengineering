@@ -1,5 +1,6 @@
 import pygame
 
+
 class Windows(pygame.sprite.Sprite):
     WINDOW_COLOR = (192, 192, 192)
 

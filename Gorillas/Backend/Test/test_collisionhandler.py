@@ -1,11 +1,11 @@
 import unittest
+
 from Backend.Controllers.CollisionHandler import CollisionHandler
-from Backend.Data.Projectile import Projectile
 from Backend.Data.Building import Building
-from Backend.Data.Gorilla import Gorilla
-from Backend.Data.Enumerators import GorillaLocation
 from Backend.Data.Enumerators import CollisionResult
-from typing import Tuple
+from Backend.Data.Enumerators import GorillaLocation
+from Backend.Data.Gorilla import Gorilla
+from Backend.Data.Projectile import Projectile
 
 
 class TestCollisionHandler(unittest.TestCase):
@@ -101,7 +101,6 @@ class TestCollisionHandler(unittest.TestCase):
         self.assertEqual(1, len(clist))
         self.assertEqual(CollisionResult.BUILDING_HIT, clist[0].collision_result)
 
-
         building1 = Building(1200, 50, (172, 145, 244), 50, 150)
         building2 = Building(1230, 200, (172, 145, 244), 50, 150)
         building3 = Building(1200, 220, (172, 145, 244), 50, 150)
@@ -135,11 +134,6 @@ class TestCollisionHandler(unittest.TestCase):
         clist = CollisionHandler.test_collisions(projects, buildings, players)
         self.assertEqual(1, len(clist))
         self.assertEqual(CollisionResult.PLAYER_HIT, clist[0].collision_result)
-
-
-
-
-
 
     def test_test_collisions_multiple_projectiles(self):
         project1 = Projectile(10, 45, 0, 0, 'project1', 5)
@@ -179,4 +173,3 @@ class TestCollisionHandler(unittest.TestCase):
         self.assertEqual(2, len(clist))
         self.assertEqual(CollisionResult.BUILDING_HIT, clist[0].collision_result)
         self.assertEqual(CollisionResult.BUILDING_HIT, clist[1].collision_result)
-

@@ -19,8 +19,8 @@ class Wind:
 
     def __str__(self):
         direction_map = {
-            WindDirection.LEFT : "Left",
-            WindDirection.RIGHT : "Right",
+            WindDirection.LEFT: "Left",
+            WindDirection.RIGHT: "Right",
 
         }
 

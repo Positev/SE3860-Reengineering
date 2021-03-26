@@ -21,4 +21,3 @@ class Sun(pygame.sprite.Sprite):
         if pygame.sprite.collide_rect(projectile, self):
             return True
         return False
-

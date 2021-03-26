@@ -2,10 +2,8 @@ import sys
 
 import pygame
 import pygame_gui
-from pygame_gui.core.interfaces import IContainerLikeInterface
-from typing import Union
-
 from Backend.Data.GameState import GameState
+from pygame_gui.core.interfaces import IContainerLikeInterface
 
 
 class EndingScreen(pygame_gui.elements.ui_panel.UIPanel):
@@ -30,14 +28,11 @@ class EndingScreen(pygame_gui.elements.ui_panel.UIPanel):
                                                                    text=f"Score: {game_state.score.get_score(game_state.gorillas[1].player_id)}",
                                                                    manager=manager)
         label_exit = pygame_gui.elements.ui_label.UILabel(relative_rect=pygame.Rect((470, 700), (300, 20)),
-                                                                   text="Press Enter to exit game...",
-                                                                   manager=manager)
+                                                          text="Press Enter to exit game...",
+                                                          manager=manager)
 
     def process_event(self, event: pygame.event.Event) -> bool:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 sys.exit()
                 return True
-
-
-

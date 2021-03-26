@@ -1,10 +1,11 @@
 from typing import Tuple
+
 import pygame
 
 
 class Building:
-    def __init__(self, x_pos: float, y_pos: float, color: Tuple[int,int,int], width:float, height:float,
-                 key: int = 0 ):
+    def __init__(self, x_pos: float, y_pos: float, color: Tuple[int, int, int], width: float, height: float,
+                 key: int = 0):
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.color = color
@@ -13,7 +14,8 @@ class Building:
         self.height = height
 
     def graphable(self):
-        return f"0| <| y| <| {self.height}|left|{{{self.x_pos} < x <{self.x_pos + self.width}|right|}}".replace('|','\\')
+        return f"0| <| y| <| {self.height}|left|{{{self.x_pos} < x <{self.x_pos + self.width}|right|}}".replace('|',
+                                                                                                                '\\')
 
     def __str__(self):
         return f"Key: {self._key}, X: {self._x_pos}, Y:{self._y_pos}, Color: {self._color}, Width: {self._width}, Height: {self._height}, Graphable: {self.graphable()}"
@@ -24,15 +26,14 @@ class Building:
     def key(self):
         return self._key
 
-
-    def top_center(self) -> Tuple[float,float]:
+    def top_center(self) -> Tuple[float, float]:
         x = self.x_pos + self.width / 2
         y = self.height
         print(f"top center: {x},{y}")
         return x, y
 
     def copy(self):
-        return Building(self.x_pos,self.y_pos, tuple(c for c in self.color), self.width, self.height, self._key)
+        return Building(self.x_pos, self.y_pos, tuple(c for c in self.color), self.width, self.height, self._key)
 
     @property
     def x_pos(self) -> float:
@@ -41,13 +42,13 @@ class Building:
     @x_pos.setter
     def x_pos(self, value: float):
         self._x_pos = value
-    
+
     @property
     def y_pos(self) -> float:
         return self._y_pos
 
     @y_pos.setter
-    def y_pos(self, value: float ):
+    def y_pos(self, value: float):
         self._y_pos = value
 
     @property
@@ -57,7 +58,7 @@ class Building:
     @width.setter
     def width(self, value: float):
         self._width = value
-    
+
     @property
     def height(self) -> float:
         return self._height
@@ -71,13 +72,14 @@ class Building:
         return self._color
 
     @color.setter
-    def color(self, value: Tuple[int,int,int]):
+    def color(self, value: Tuple[int, int, int]):
         if type(value) is not tuple:
             raise ValueError(f"{value} is not a valid color.")
 
         for val in value:
             if type(val) is not int:
-                raise ValueError(f"{val} must be an integer, but {val} is {type(val)}. So {value} is not a valid color.")
+                raise ValueError(
+                    f"{val} must be an integer, but {val} is {type(val)}. So {value} is not a valid color.")
             if not (0 <= val <= 255):
                 raise ValueError(f"{val} must be between 0 and 255. {value} is not a valid color.")
         self._color = value

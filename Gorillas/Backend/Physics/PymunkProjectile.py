@@ -1,6 +1,4 @@
 # An extension of the projectile class to provide extra data for pymunk
-import math
-from math import cos, sin
 
 import pymunk
 

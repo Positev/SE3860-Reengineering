@@ -17,4 +17,5 @@ class Collisions(pygame.sprite.Sprite):
         # Create the image of the destruction
         self.image = pygame.Surface((destruction.major_axis_dx, destruction.minor_axis_dy), flags=pygame.SRCALPHA)
         self.image.fill((0, 0, 0, 0))
-        pygame.draw.ellipse(self.image, self.DESTRUCTION_COLOR, pygame.Rect(0, 0, destruction.major_axis_dx, destruction.minor_axis_dy))
+        pygame.draw.ellipse(self.image, self.DESTRUCTION_COLOR,
+                            pygame.Rect(0, 0, destruction.major_axis_dx, destruction.minor_axis_dy))

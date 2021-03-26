@@ -13,7 +13,6 @@ class CoordinateAdapter:
     def adapt_projectiles(self, active_projectiles):
         projectiles = []
         for projectile in active_projectiles:
-
             old_pos = projectile.get_pos()
             cur_pos = self._to_top_left_origin_ucs(old_pos)
             size = projectile.get_size()
@@ -32,9 +31,9 @@ class CoordinateAdapter:
         adapted_gorillas = []
         for gorilla in gorillas:
             g = gorilla.copy()
-            in_ucs = self._to_top_left_origin_ucs((g.x_pos, g.y_pos ))
+            in_ucs = self._to_top_left_origin_ucs((g.x_pos, g.y_pos))
             g.x_pos, g.y_pos = in_ucs[0] - g.width / 2, in_ucs[1] - g.height * 2
-            #print(f"gorilla pos`: {gorilla.x_pos},{gorilla.y_pos}")
+            # print(f"gorilla pos`: {gorilla.x_pos},{gorilla.y_pos}")
             adapted_gorillas.append(g)
         return adapted_gorillas
 
@@ -44,7 +43,7 @@ class CoordinateAdapter:
             new_buidling = building.copy()
             pos = self._to_top_left_origin_ucs(new_buidling.get_pos())
 
-            new_buidling.x_pos, new_buidling.y_pos = pos[0], pos[1]-new_buidling.height
+            new_buidling.x_pos, new_buidling.y_pos = pos[0], pos[1] - new_buidling.height
             buildings.append(new_buidling)
         return buildings
 
@@ -60,11 +59,5 @@ class CoordinateAdapter:
             destruction.center_x, destruction.center_y = center
 
         adapted_game_state.building = self.adapt_buildings(adapted_game_state.building)
-
-
-
-
-
-
 
         return adapted_game_state

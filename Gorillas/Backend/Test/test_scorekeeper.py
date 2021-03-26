@@ -1,5 +1,7 @@
 import unittest
+
 from Backend.Data.ScoreKeeper import ScoreKeeper
+
 
 class TestSoreKeeper(unittest.TestCase):
     def test_init(self):
@@ -30,4 +32,3 @@ class TestSoreKeeper(unittest.TestCase):
         self.assertEqual(sk.get_score(1), 0)
         sk.record_win(0)
         self.assertEqual(sk.get_score(0), 1)
-

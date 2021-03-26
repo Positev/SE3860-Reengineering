@@ -3,6 +3,7 @@ import pygame
 
 class Model:
     """A base class for creating a model to render sprites"""
+
     def __init__(self, background_color):
         self.background_color = background_color
         self.render = list()

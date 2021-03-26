@@ -9,6 +9,7 @@ from Backend.Data.Enumerators import GorillaLocation, ArmState
 
 ARM_UP_TIME = 10
 
+
 class GorillaController:
     def __init__(self, gorilla):
         self.gorilla = gorilla
