@@ -16,6 +16,8 @@ from pygame_gui.core.interfaces import IContainerLikeInterface
 import utils
 from typing import Union
 
+from Gorillas.ui.model.ending_screen import EndingScreen
+
 
 class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
     PANEL_SIZE = (300, 200)
@@ -71,6 +73,7 @@ class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
         self.launch_button.set_relative_position(
             (self._rect.width / 2 - self.launch_button.relative_rect.centerx, self.launch_button.relative_rect.y))
 
+
     def update(self, time_delta: float):
         super().update(time_delta)
         if not self.is_enabled\
@@ -100,7 +103,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                                                                 parent_element=self)
 
         self.max_score = max_score
-        self.gameModel = GameScreenModel(self._game_rect.size, player_1_id, player_2_id, gravity, max_score)
+        self.gameModel = GameScreenModel(self, self._game_rect.size, player_1_id, player_2_id, gravity, max_score)
 
         player_one_input_panel_pos = (0, self._rect.height - PlayerInputPanel.PANEL_SIZE[1])
         self.player_one_input_panel = PlayerInputPanel(player_one_input_panel_pos, player_1_id,
@@ -110,6 +113,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                                       self._rect.height - PlayerInputPanel.PANEL_SIZE[1])
         self.player_two_input_panel = PlayerInputPanel(player_two_input_panel_pos, player_2_id,
                                                        manager=manager, container=self)
+
 
     def update(self, time_delta: float):
         super().update(time_delta)
@@ -144,6 +148,12 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                     winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
 
+    def create_ending_screen(self):
+        pygame.event.post(pygame.event.Event(pygame.USEREVENT,
+                                             {"Change Model": EndingScreen(self.gameModel.game_state,
+                                                                           self._game_rect, self.ui_manager)}))
+
+
 
 class GameScreenModel(Model):
     """The main screen of the game"""
@@ -153,7 +163,7 @@ class GameScreenModel(Model):
     GORILLA_LEFT = pygame.image.load("Sprites/Doug/dougLeft.png")
     GORILLA_RIGHT = pygame.image.load("Sprites/Doug/dougRight.png")
 
-    def __init__(self, screen_size, player_1_id, player_2_id, gravity, max_score):
+    def __init__(self, gameScreenPanel,  screen_size, player_1_id, player_2_id, gravity, max_score):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer
         self.render.append(pygame.sprite.Group())  # Main Layer
@@ -162,9 +172,8 @@ class GameScreenModel(Model):
         self.player_pos = {player_1_id: 0, player_2_id: 1}
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
-        self.game_controller = GameController(player_1_id, player_2_id, screen_size, max_score, gravity=gravity)
+        self.game_controller = GameController(gameScreenPanel, player_1_id, player_2_id, screen_size, max_score, gravity=gravity)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
-
         # Create the background
         self.background = pygame.Surface(screen_size)
         self.background = self.background.convert()
@@ -276,3 +285,5 @@ class GameScreenModel(Model):
         else:
             pygame.time.Clock().tick(60)
         self.update_frame(self.game_state)
+
+
