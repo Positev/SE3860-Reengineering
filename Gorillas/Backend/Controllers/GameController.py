@@ -86,12 +86,12 @@ class GameController:
         if collision.collision_result != CollisionResult.OUT_OF_BOUNDS:
             for collider in self._game_state.building:
                 if collider.c_id == collision.collided_id():
-                    self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 30, 0, 0, 15))
+                    self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 60, 0, 0, 60))
                     print(f"\tCollided With -> {collider}")
                     winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
             for player in self._game_state.gorillas:
                 if player.c_id == collision.collided_id():
-                    self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 45, 0, 0, 15))
+                    self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 470, 0, 0, 470))
                     self._game_state.score.record_win(projectileForCollision.sender_id)
                     print(f"\t{player.player_id} has been hit!")
                     winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)

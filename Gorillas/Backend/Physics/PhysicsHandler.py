@@ -59,7 +59,7 @@ class PhysicsHandler:
                         dest_center = center[0] + dest_displacement[0], center[1] + dest_displacement[1]
 
                         return False
-                dest = PymunkDestruction(*dest_center, 5)
+                dest = PymunkDestruction(*dest_center, 15)
                 self.destruction.append(dest)
                 dest.add_to_space(self.space)
                 self.active_projectiles.remove(projectile)

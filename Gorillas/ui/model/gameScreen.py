@@ -84,7 +84,8 @@ class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
                 or not utils.isint(self.angle_box.get_text()) \
                 or not utils.isint(self.velocity_box.get_text()) \
                 or float(self.angle_box.get_text()) <= 0 \
-                or int(self.velocity_box.get_text()) <= 0:
+                or int(self.velocity_box.get_text()) <= 0\
+                or int(self.velocity_box.get_text()) > 2000:
             self.launch_button.disable()
         else:
             self.launch_button.enable()
@@ -171,24 +172,26 @@ class GameScreenModel(Model):
 
     def __init__(self, gameScreenPanel,  screen_size, player_1_id, player_2_id, gravity, max_score):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
-        self.render.append(pygame.sprite.Group())  # Building Layer
-        self.render.append(pygame.sprite.Group())  # Window Layer
-        self.render.append(pygame.sprite.Group())  # Main Layer
-        self.render.append(pygame.sprite.Group())  # Destruction Layer
-        self.render.append(pygame.sprite.Group())  # UI Layer
+        self.render.append(pygame.sprite.Group())  # Building Layer 0
+        self.render.append(pygame.sprite.Group())  # Window Layer 1
+        self.render.append(pygame.sprite.Group())  # Main Layer 2
+        self.render.append(pygame.sprite.Group())  # Destruction Layer 3
+        self.render.append(pygame.sprite.Group())  # Projectile Layer 4
+        self.render.append(pygame.sprite.Group())  # UI Layer 5
 
         self.player_pos = {player_1_id: 0, player_2_id: 1}
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
         self.game_controller = GameController(gameScreenPanel, player_1_id, player_2_id, screen_size, max_score, gravity=gravity)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
+        print(self.game_state)
         # Create the background
         self.background = pygame.Surface(screen_size)
         self.background = self.background.convert()
         self.background.fill(self.BACKGROUND_COLOR)
         # Create the Sun object. Won't move.
-        sun_width = screen_size[0] / 20
-        sun_height = screen_size[1] / 30
+        sun_width = screen_size[0] / 10
+        sun_height = screen_size[1] / 5
         sun_x_pos = (screen_size[0] - sun_width) / 2
         sun_y_pos = (screen_size[1] - sun_height) / 10
         self.sun = Sun(sun_width, sun_height, sun_x_pos, sun_y_pos)
@@ -197,10 +200,11 @@ class GameScreenModel(Model):
         self.buildings = []
         self.windows = []
         for building in self.game_state.building:
-            building_pos = (building.x_pos, building.y_pos - building.height)
-            building_pos = (building.x_pos, building.y_pos - 14)
-            building_size = (building.width, building.height * 1.5)
+            building_pos = (building.x_pos, building.y_pos)
+            # building_pos = (building.x_pos, building.y_pos - 14)
+            building_size = (building.width, building.height)
             new_building = Building(building.color, building_pos, building_size)
+            # Windows
             num_horizontal = random.randint(3, 7)
             num_vertical = random.randint(4, 8)
             window_size = [new_building.size[0] / num_horizontal, new_building.size[1] / num_vertical]
@@ -229,7 +233,7 @@ class GameScreenModel(Model):
 
         # Create the wind arrow
         self.wind_arrow = WindArrow(self.game_state.wind.direction, self.game_state.wind.velocity, screen_size)
-        self.render[4].add(self.wind_arrow)
+        self.render[5].add(self.wind_arrow)
         # Create a list to store destruction in
         self.collision_list = []
         self.collision_num = 0
@@ -237,7 +241,7 @@ class GameScreenModel(Model):
         # May need to update in later revisions if there are multiple projectiles
         self.projectile = Banana((30, 20), (0, 0))
         self.projectile.transparent()
-        self.render[2].add(self.projectile)
+        self.render[4].add(self.projectile)
         # Blit the objects to the background
         self.background.blit(self.sun.image, self.sun.rect)
         for building in self.buildings:
@@ -254,7 +258,7 @@ class GameScreenModel(Model):
     def create_gorilla(self, gorilla, building, image):
         """Creates a UI Gorilla object from given data"""
 
-        pos = (gorilla.x_pos, gorilla.y_pos)
+        pos = (gorilla.x_pos, gorilla.y_pos + 15)
         dimensions = (gorilla.width, gorilla.height)
         new_gorilla = Gorilla(dimensions, pos, image)
         return new_gorilla
@@ -312,6 +316,7 @@ class GameScreenModel(Model):
             self.sun.image = self.SUN_SMILE
             self.sun.image = scale(self.sun.image, (int(self.sun.size[0]), int(self.sun.size[1])))
 
+        pygame.display.flip()
         """Room to update UI Elements when working on combining all branches into a coherent branch"""
 
 
@@ -324,5 +329,6 @@ class GameScreenModel(Model):
         else:
             pygame.time.Clock().tick(60)
         self.update_frame(self.game_state)
+
 
 
