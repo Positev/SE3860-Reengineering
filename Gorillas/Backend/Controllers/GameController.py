@@ -2,6 +2,8 @@ import winsound
 from random import  randint, choice
 from typing import Tuple, List
 
+import pygame
+import pygame_gui
 from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
 from Backend.Controllers.BuildingGenerator import BuildingGenerator
 from Backend.Controllers.CollisionHandler import CollisionHandler
@@ -15,12 +17,15 @@ from Backend.Data.Wind import Wind
 from Backend.Data.WorldDestruction import WorldDestruction
 from Backend.Physics.PymunkGorilla import PymunkGorilla
 
+from Gorillas.ui.model.ending_screen import EndingScreen
+# from Gorillas.ui.model.gameScreen import GameScreenModel
+
 WIND_RANGE = (1, 35)
 
 class GameController:
 
     # TODO add gravity parameter
-    def __init__(self, player_1_id, player_2_id, screen_size: Tuple[int, int], max_score, gravity: float = 1):
+    def __init__(self, gameScreenPanel, player_1_id, player_2_id, screen_size: Tuple[int, int], max_score, gravity: float = 1):
         building_generator = BuildingGenerator()
         buildings = building_generator.generate_buildings(screen_size)
         self._screen_size = screen_size
@@ -45,6 +50,7 @@ class GameController:
             wind,
             turn_active
         )
+        self.__gameScreenPanel = gameScreenPanel
 
         from Backend.Physics.PhysicsHandler import PhysicsHandler
         self.physics_handler = PhysicsHandler(buildings, [player_1, player_2], self._handle_collision, 90, wind, screen_size)
@@ -82,6 +88,7 @@ class GameController:
                 if collider.c_id == collision.collided_id():
                     self._game_state.destruction.append(WorldDestruction(collision.x_pos, collision.y_pos, 30, 0, 0, 15))
                     print(f"\tCollided With -> {collider}")
+                    self.__gameScreenPanel.create_ending_screen()
                     winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
             for player in self._game_state.gorillas:
                 if player.c_id == collision.collided_id():
@@ -91,7 +98,8 @@ class GameController:
                     winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     if self._game_state.is_game_over():
                         # TODO: jump to game over screen
-                        raise Exception("TODO: the logic about game over")
+                        self.__gameScreenPanel.create_ending_screen()
+
 
         if projectileForCollision in self._game_state.active_projectiles:
             self._game_state.active_projectiles.remove(projectileForCollision)
