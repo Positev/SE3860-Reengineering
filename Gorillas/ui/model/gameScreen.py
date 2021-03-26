@@ -208,7 +208,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
 
     def create_ending_screen(self):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT,
-                                             {"Change Model": EndingScreen(self.gameModel.game_state,
+                                             {"Change Model": EndingScreen(self._player_scores,
                                                                            self._game_rect, self.ui_manager)}))
 
 
