@@ -21,6 +21,7 @@ class GameState:
             self._player_turn = 0
             self.__is_game_over = False
             self.__winner_id = None
+            self.__loser_id = None
         else:
             raise Exception("Wrong type parameter.")
 
@@ -129,11 +130,19 @@ class GameState:
             return False
         else:
             self.__winner_id = winner
+            if self.__winner_id == self.__gorillas[0].player_id:
+                self.__loser_id = self.__gorillas[1].player_id
+            else:
+                self.__loser_id = self.__gorillas[0].player_id
             return True
 
     @property
     def winner(self):
         return self.__winner_id
+
+    @property
+    def loser(self):
+        return self.__loser_id
 
     def __str__(self):
 
