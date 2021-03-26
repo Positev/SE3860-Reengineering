@@ -16,9 +16,9 @@ class Sun(pygame.sprite.Sprite):
         self.image = pygame.image.load("Sprites/Sun/sun_doug_2.png")
         self.image = scale(self.image, (int(width), int(height)))
 
-    def sun_collide(self, projectile_rect):
+    def sun_collide(self, projectile):
         # Return true if the projectile is colliding with the sun at the time
-        if pygame.sprite.collide_rect(projectile_rect, self.rect):
+        if pygame.sprite.collide_rect(projectile, self):
             return True
         return False
 

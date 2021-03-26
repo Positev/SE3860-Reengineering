@@ -2,6 +2,8 @@ import winsound
 
 import pygame
 import pygame_gui
+from pygame.transform import scale
+
 from ui.model.elements.sprites.windArrow import WindArrow
 from ui.model.elements.sprites.banana import Banana
 from ui.model.elements.sprites.collisions import Collisions
@@ -16,7 +18,7 @@ from pygame_gui.core.interfaces import IContainerLikeInterface
 import utils
 from typing import Union
 
-from Gorillas.ui.model.ending_screen import EndingScreen
+from ui.model.ending_screen import EndingScreen
 
 
 class PlayerInputPanel(pygame_gui.elements.ui_panel.UIPanel):
@@ -260,9 +262,6 @@ class GameScreenModel(Model):
                 self.projectile.rect = pygame.Rect(projectile_pos[0], projectile_pos[1], self.projectile.size[0],
                                                    self.projectile.size[1])
                 self.projectile.visible()
-        elif not self.getting_input:
-            self.reset_player_ui()
-            self.projectile.transparent()
         else:
             self.projectile.transparent()
 
@@ -285,32 +284,15 @@ class GameScreenModel(Model):
                                            self.wind_arrow.WIND_HEIGHT)
 
         # Update the sun
-        if self.sun.sun_collide(self.projectile.rect):
+        if self.sun.sun_collide(self.projectile):
             self.sun.image = self.SUN_FROWN
+            self.sun.image = scale(self.sun.image, (int(self.sun.size[0]), int(self.sun.size[1])))
         else:
             self.sun.image = self.SUN_SMILE
+            self.sun.image = scale(self.sun.image, (int(self.sun.size[0]), int(self.sun.size[1])))
 
         """Room to update UI Elements when working on combining all branches into a coherent branch"""
 
-    def do_key_event(self, event):
-        """If the key press is enter go to the next text box otherwise send the event to the textbox"""
-        if event.key == pygame.K_RETURN:
-            if self.active_edit_box == self.velocity_edit_box and utils.isint(self.velocity_edit_box.text):
-                throw = self.get_player_throw()
-                angle = throw[0]
-                velocity = throw[1]
-                self.game_controller.throw_projectile(angle, velocity)
-                self.active_edit_box = self.angle_edit_box
-                self.getting_input = False
-            elif utils.isint(self.angle_edit_box.text):
-                self.active_edit_box = self.velocity_edit_box
-        else:
-            self.active_edit_box.handle_event(event)
-
-    def handle_event(self, event):
-        """Handle the pygame event"""
-        if self.getting_input and event.type == pygame.KEYDOWN:
-            self.do_key_event(event)
 
     def update(self):
         """Get the next frame from game state and update render"""
