@@ -1,7 +1,11 @@
 import operator
 import random
-import winsound
 from typing import Union
+import os
+GAME_SOUND_AVAILABLE = os.name == 'nt'
+
+if GAME_SOUND_AVAILABLE:
+    import winsound
 
 import pygame
 import pygame_gui
@@ -193,16 +197,18 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.player_one_input_panel.launch_button:
-                    self.gameModel.game_controller.throw_projectile(
-                        float(self.player_one_input_panel.angle_box.get_text()),
-                        float(self.player_one_input_panel.velocity_box.get_text()))
-                    winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    self.gameModel.game_controller.throw_projectile(float(self.player_one_input_panel.angle_box.get_text()),
+                                                                    float(self.player_one_input_panel.velocity_box.get_text()))
+
+                    if GAME_SOUND_AVAILABLE:
+                        winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
                 elif event.ui_element == self.player_two_input_panel.launch_button:
-                    self.gameModel.game_controller.throw_projectile(
-                        float(self.player_two_input_panel.angle_box.get_text()),
-                        float(self.player_two_input_panel.velocity_box.get_text()))
-                    winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    self.gameModel.game_controller.throw_projectile(float(self.player_two_input_panel.angle_box.get_text()),
+                                                                    float(self.player_two_input_panel.velocity_box.get_text()))
+
+                    if GAME_SOUND_AVAILABLE:
+                        winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
                 elif self.roundEnd is not None and event.ui_element == self.roundEnd.next_round_button:
                     self.gameModel = GameScreenModel(self._game_rect.size, self._playerids[0], self._playerids[1], self.gravity, self.max_score, self.end_round)

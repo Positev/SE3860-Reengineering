@@ -1,6 +1,12 @@
-import winsound
-from random import randint, choice
-from typing import Tuple
+
+import os
+
+GAME_SOUND_AVAILABLE = os.name == 'nt'
+
+if GAME_SOUND_AVAILABLE:
+    import winsound
+from random import  randint, choice
+from typing import Tuple, List
 
 from Backend.Adapters.CoordinateAdapter import CoordinateAdapter
 from Backend.Controllers.BuildingGenerator import BuildingGenerator
@@ -84,17 +90,19 @@ class GameController:
                     self._game_state.destruction.append(
                         WorldDestruction(collision.x_pos, collision.y_pos, 60, 0, 0, 60))
                     print(f"\tCollided With -> {collider}")
-                    winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    if GAME_SOUND_AVAILABLE:
+                        winsound.PlaySound("sounds\\hit_building.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
             for player in self._game_state.gorillas:
                 if player.c_id == collision.collided_id():
                     self._game_state.destruction.append(
                         WorldDestruction(collision.x_pos, collision.y_pos, 470, 0, 0, 470))
                     self._game_state.score.record_win(projectileForCollision.sender_id)
                     print(f"\t{player.player_id} has been hit!")
-                    winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     self.player_hit_handler(player)
-                    #if self._game_state.is_game_over():
-                    #    self.__gameScreenPanel.create_ending_screen()
+                    if GAME_SOUND_AVAILABLE:
+                        winsound.PlaySound("sounds\\hit_gorilla.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
+                    if self._game_state.is_game_over():
+                        self.__gameScreenPanel.create_ending_screen()
 
 
         if projectileForCollision in self._game_state.active_projectiles:
