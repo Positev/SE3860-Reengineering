@@ -137,7 +137,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
 
         self.max_score = max_score
         self.gravity = gravity
-        self.gameModel = GameScreenModel(self._game_rect.size, player_1_id, player_2_id, gravity, max_score)
+        self.gameModel = GameScreenModel(self._game_rect.size, player_1_id, player_2_id, gravity, max_score, self.end_round)
 
         player_one_input_panel_pos = (0, self._rect.height - PlayerInputPanel.PANEL_SIZE[1])
         self.player_one_input_panel = PlayerInputPanel(player_one_input_panel_pos, player_1_id,
@@ -149,36 +149,39 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                                                        manager=manager, container=self)
 
         self.roundEnd = None
+        self._round_over = False
 
     def update(self, time_delta: float):
         super().update(time_delta)
-        self.gameModel.update()
-        self.gameModel.draw(self.game_surface_element.image)
-        if self.gameModel.game_state.is_game_over():
-            self.player_one_input_panel.disable()
-            self.player_two_input_panel.disable()
-            if self.roundEnd is None:
-                winner = self.gameModel.game_state.winner
-                winner_score = 1 + self._player_scores.get(winner)
-                self._player_scores.update({winner: winner_score})
-                if winner_score >= self.max_score:
-                    self.create_ending_screen()
-                    return
-                self.roundEnd = PlayerHitPanel(
-                    tuple(map(operator.sub, self._rect.center, (PlayerHitPanel.PANEL_SIZE[0]/2, PlayerHitPanel.PANEL_SIZE[1]/2))),
-                    winner, self.gameModel.game_state.loser,
-                    winner_score,
-                    self._player_scores.get(self.gameModel.game_state.loser),
-                    manager=self.ui_manager, container=self)
-        elif self.gameModel.game_state.turn_active:
-            self.player_one_input_panel.disable()
-            self.player_two_input_panel.disable()
-        elif self.gameModel.game_state.active_player().player_id == self._playerids[0]:
-            self.player_one_input_panel.enable()
-            self.player_two_input_panel.disable()
-        else:
-            self.player_two_input_panel.enable()
-            self.player_one_input_panel.disable()
+        if not self._round_over:
+            self.gameModel.update()
+            self.gameModel.draw(self.game_surface_element.image)
+            if self.gameModel.game_state.turn_active:
+                self.player_one_input_panel.disable()
+                self.player_two_input_panel.disable()
+            elif self.gameModel.game_state.active_player().player_id == self._playerids[0]:
+                self.player_one_input_panel.enable()
+                self.player_two_input_panel.disable()
+            else:
+                self.player_two_input_panel.enable()
+                self.player_one_input_panel.disable()
+
+    def end_round(self):
+        self._round_over = True
+        self.player_one_input_panel.disable()
+        self.player_two_input_panel.disable()
+        winner = self.gameModel.game_state.winner
+        winner_score = 1 + self._player_scores.get(winner)
+        self._player_scores.update({winner: winner_score})
+        if winner_score >= self.max_score:
+            self.create_ending_screen()
+            return
+        self.roundEnd = PlayerHitPanel(
+            tuple(map(operator.sub, self._rect.center, (PlayerHitPanel.PANEL_SIZE[0]/2, PlayerHitPanel.PANEL_SIZE[1]/2))),
+            winner, self.gameModel.game_state.loser,
+            winner_score,
+            self._player_scores.get(self.gameModel.game_state.loser),
+            manager=self.ui_manager, container=self)
 
     def process_event(self, event: pygame.event.Event) -> bool:
         """
@@ -203,7 +206,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                 elif self.roundEnd is not None and event.ui_element == self.roundEnd.next_round_button:
                     self.gameModel = GameScreenModel(self._game_rect.size, self._playerids[0], self._playerids[1], self.gravity, self.max_score)
                     self.roundEnd.kill()
-                    self.roundEnd = None
+                    self._round_over = False
                     return True
 
     def create_ending_screen(self):
@@ -222,7 +225,7 @@ class GameScreenModel(Model):
     SUN_FROWN = pygame.image.load("Sprites/Sun/sun_doug_1.png")
     SUN_SMILE = pygame.image.load("Sprites/Sun/sun_doug_2.png")
 
-    def __init__(self, screen_size, player_1_id, player_2_id, gravity, max_score):
+    def __init__(self, screen_size, player_1_id, player_2_id, gravity, max_score, on_round_end):
         super(GameScreenModel, self).__init__(self.BACKGROUND_COLOR)
         self.render.append(pygame.sprite.Group())  # Building Layer 0
         self.render.append(pygame.sprite.Group())  # Window Layer 1
@@ -235,7 +238,7 @@ class GameScreenModel(Model):
 
         self.coordinate_adapter = CoordinateAdapter(screen_size)
         self.game_controller = GameController(player_1_id, player_2_id, screen_size, max_score,
-                                              gravity=gravity)
+                                              gravity=gravity, on_player_hit=on_round_end)
         self.game_state = self.coordinate_adapter.adapt(self.game_controller.next_frame())
         print(self.game_state)
         # Create the background
