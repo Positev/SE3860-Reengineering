@@ -166,21 +166,22 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                 self.player_two_input_panel.enable()
                 self.player_one_input_panel.disable()
 
-    def end_round(self):
+    def end_round(self, round_loser):
         self._round_over = True
         self.player_one_input_panel.disable()
         self.player_two_input_panel.disable()
-        winner = self.gameModel.game_state.winner
-        winner_score = 1 + self._player_scores.get(winner)
-        self._player_scores.update({winner: winner_score})
+        round_loser_id = round_loser.player_id
+        round_winner_id = self._playerids[1] if self._playerids[0] == round_loser_id else self._playerids[0]
+        winner_score = 1 + self._player_scores.get(round_winner_id)
+        self._player_scores.update({round_winner_id: winner_score})
         if winner_score >= self.max_score:
             self.create_ending_screen()
             return
         self.roundEnd = PlayerHitPanel(
             tuple(map(operator.sub, self._rect.center, (PlayerHitPanel.PANEL_SIZE[0]/2, PlayerHitPanel.PANEL_SIZE[1]/2))),
-            winner, self.gameModel.game_state.loser,
+            round_winner_id, round_loser_id,
             winner_score,
-            self._player_scores.get(self.gameModel.game_state.loser),
+            self._player_scores.get(round_loser_id),
             manager=self.ui_manager, container=self)
 
     def process_event(self, event: pygame.event.Event) -> bool:
@@ -204,7 +205,7 @@ class GameScreenPanel(pygame_gui.elements.ui_panel.UIPanel):
                     winsound.PlaySound("sounds\\throw.wav", winsound.SND_ASYNC | winsound.SND_ALIAS)
                     return True
                 elif self.roundEnd is not None and event.ui_element == self.roundEnd.next_round_button:
-                    self.gameModel = GameScreenModel(self._game_rect.size, self._playerids[0], self._playerids[1], self.gravity, self.max_score)
+                    self.gameModel = GameScreenModel(self._game_rect.size, self._playerids[0], self._playerids[1], self.gravity, self.max_score, self.end_round)
                     self.roundEnd.kill()
                     self._round_over = False
                     return True
